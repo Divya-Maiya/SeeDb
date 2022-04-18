@@ -48,7 +48,15 @@ try:
         data_distributor.split_data(splits)
     
     data_distributor.generate_split_views(cursor, connection, splits)
-    
+    cursor.execute("select count(*) from split_view1")
+    rows = cursor.fetchone()
+    print(rows)   
+    cursor.execute("select count(*) from split_view2")
+    rows2 = cursor.fetchone()
+    print(rows2) 
+    cursor.execute("select count(*) from split_view3")
+    rows3 = cursor.fetchone()
+    print(rows3) 
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
 finally:

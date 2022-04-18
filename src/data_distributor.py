@@ -30,8 +30,7 @@ def is_dir_empty(path):
 def generate_split_views(cursor, connection, splits):
     for i in range(1, int(splits)+1):
         cursor.execute("""
-                       drop table if exists split_view{};
-                       create table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, economic_indicator text);
+                       create temp table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, economic_indicator text);
                        """.format(i, i, i))
         connection.commit()
         f = open('../data/test_split_{}.csv'.format(i), 'r')
