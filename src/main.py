@@ -34,6 +34,7 @@ import db_disconnector
 import query_utils
 try:
     cursor, connection = db_connector.setupConnection()
+<<<<<<< Updated upstream
     # cursor.execute("select * from Census limit 10")
     # rows = cursor.fetchall()
     # for r in rows:
@@ -43,6 +44,11 @@ try:
     for q in queries:
         print(q)
 
+=======
+    cursor.execute("select count(*) from census")
+    rows = cursor.fetchone()
+    print(rows)
+>>>>>>> Stashed changes
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
 finally:
