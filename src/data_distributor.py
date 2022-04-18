@@ -5,16 +5,13 @@ import pandas as pd
 import os
 import numpy as np
 
-def split_data():
+def split_data(splits):
     all_rows = pd.read_csv("../data/adult.data", sep=",")
-    config = configparser.ConfigParser()
-    config.read('../config/seedb_configs.ini')  
-    splits = config['phased.execution.framework']['splits']
+    
     print(all_rows.tail())
     df_split= np.array_split(all_rows,int(splits))
     for i in range(1,len(df_split)+1):
         df_split[i-1].to_csv("../data/test_split_{}.csv".format(i),encoding='utf-8', index=False)
-    print("DONE")
 
 def is_dir_empty(path):
     initial_count = 0
@@ -29,6 +26,19 @@ def is_dir_empty(path):
             return False if initial_count > 1 else True
     else:
         return True
+
+def generate_split_views(cursor, connection, splits):
+    for i in range(1, int(splits)+1):
+        cursor.execute("""
+                       drop table if exists split_view{};
+                       create table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, economic_indicator text);
+                       """.format(i, i, i))
+        connection.commit()
+        f = open('../data/test_split_{}.csv'.format(i), 'r')
+        cursor.copy_from(f, 'split_view{}'.format(i), sep=',')
+        connection.commit()
+        f.close()
+    
 
 def split_data_by_marital_status(cursor, connection):
     

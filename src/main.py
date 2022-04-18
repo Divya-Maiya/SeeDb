@@ -8,7 +8,7 @@ config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
 sys.path.insert(0, path+'/connectors')
 sys.path.insert(1, path+'/src')
-
+splits = config['phased.execution.framework']['splits']
 # Dataset
 #   age INTEGER,
 #   workclass CHAR(50),
@@ -45,7 +45,10 @@ try:
     print(rows)
     data_distributor.split_data_by_marital_status(cursor, connection)
     if(data_distributor.is_dir_empty("../data")):
-        data_distributor.split_data()
+        data_distributor.split_data(splits)
+    
+    data_distributor.generate_split_views(cursor, connection, splits)
+    
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
 finally:
