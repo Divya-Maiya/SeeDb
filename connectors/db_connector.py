@@ -6,7 +6,7 @@ config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
 config.sections()
 
-def setupConnection():
+def setup_connection():
     # Connect to an existing database
     connection = psycopg2.connect(user=config['seedb.postgresql']['seedb_user'],
                                   password=config['seedb.postgresql']['seedb_password'],

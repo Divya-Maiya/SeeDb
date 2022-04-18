@@ -2,7 +2,7 @@ import configparser
 import psycopg2
 from psycopg2 import Error
 
-def teardownConnection(cursor, connection):
+def teardown_connection(cursor, connection):
     if (connection):
         cursor.close()
         connection.close()

@@ -7,6 +7,7 @@ config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')  
 path = config['local.paths']['basepath']
 sys.path.insert(0, path+'/connectors')
+sys.path.insert(1, path+'/src')
 
 # Dataset
 #   age INTEGER,
@@ -31,25 +32,21 @@ measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week
 
 import db_connector
 import db_disconnector
+import data_distributor
 import query_utils
 try:
-    cursor, connection = db_connector.setupConnection()
-<<<<<<< Updated upstream
-    # cursor.execute("select * from Census limit 10")
-    # rows = cursor.fetchall()
-    # for r in rows:
-    #     print(r)
-
+    cursor, connection = db_connector.setup_connection()
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
     for q in queries:
         print(q)
 
-=======
     cursor.execute("select count(*) from census")
     rows = cursor.fetchone()
     print(rows)
->>>>>>> Stashed changes
+    data_distributor.split_data_by_marital_status(cursor, connection)
+    if(data_distributor.is_dir_empty("../data")):
+        data_distributor.split_data()
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
 finally:
-    db_disconnector.teardownConnection(cursor, connection)
+    db_disconnector.teardown_connection(cursor, connection)
