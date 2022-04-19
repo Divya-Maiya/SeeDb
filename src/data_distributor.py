@@ -8,7 +8,6 @@ import numpy as np
 def split_data(splits):
     all_rows = pd.read_csv("../data/adult.data", sep=",")
     
-    print(all_rows.tail())
     df_split= np.array_split(all_rows,int(splits))
     for i in range(1,len(df_split)+1):
         df_split[i-1].to_csv("../data/test_split_{}.csv".format(i),encoding='utf-8', index=False)
@@ -37,6 +36,14 @@ def generate_split_views(cursor, connection, splits):
         cursor.copy_from(f, 'split_view{}'.format(i), sep=',')
         connection.commit()
         f.close()
+        cursor.execute("""
+                       drop table if exists split_married_{};
+                       drop table if exists split_unmarried_{};
+                       create table split_married_{} as (select * from split_view{} where marital_status in (' Married-AF-spouse', ' Married-civ-spouse', ' Married-spouse-absent',' Separated'));
+                       create table split_unmarried_{} as (select * from split_view{} where marital_status in (' Never-married', ' Widowed',' Divorced'));
+                       """.format(i,i,i,i,i,i))
+        connection.commit()
+        
     
 
 def split_data_by_marital_status(cursor, connection):
