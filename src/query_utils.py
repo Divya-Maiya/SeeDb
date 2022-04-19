@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def generate_aggregate_queries(A, M, F, table):
@@ -94,3 +95,32 @@ def kl_divergence(data, cols):
         # Apply the formula for KL Divergence
         # Refer https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
         return np.sum([qi * np.log(pi / qi) for qi, pi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
+
+
+# Bar charts for married/unmarried views Data and col values as obtained from executing the both target and reference
+# queries should be the input for this function
+# Similar to Fig 1 in the Reference paper
+def visualize_data(data, cols, title="Average Capital Gain Group by Sex"):
+    # % matplotlib inline
+    plt.style.use('ggplot')
+    N = 2
+
+    aggregate = cols[1]
+    df = convert_rows_to_df(data, cols)
+
+    unmarried = df[0][aggregate]
+    married = df[1][aggregate]
+
+    ind = np.arange(N)
+    width = 0.35
+    plt.bar(ind, unmarried, width, label='Unmarried')
+    plt.bar(ind + width, married, width,
+            label='Married')
+
+    plt.ylabel(aggregate)
+    plt.xlabel('Sex')
+    plt.title(title)
+
+    plt.xticks(ind + width / 2, ('Female', 'Male'))
+    plt.legend(loc='best')
+    plt.show()
