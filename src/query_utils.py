@@ -15,6 +15,22 @@ def generate_aggregate_queries(A, M, F, table):
     return queries
 
 
+def generate_aggregate_views(A, M, F):
+    # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
+
+    views = {}
+    for a in A:
+        for m in M:
+            for f in F:
+                if a not in views:
+                    views[a] = {}
+                if m not in views[a]:
+                    views[a][m] = set()
+                views[a][m].add(f)
+
+    return views
+
+
 def execute_queries(cursor, queries):
     data = []
     for query in queries:

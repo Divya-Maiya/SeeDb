@@ -27,7 +27,7 @@ splits = config['phased.execution.framework']['splits']
 # 	salary CHAR(50)
 
 agg_functions = ["SUM", "MIN", "MAX", "AVG", "COUNT"]
-dim_attr = ["workclass", "education", "marital_status", "occupation", "relationship", "race", "sex", "native_country", "salary"]
+dim_attr = ["workclass", "education", "occupation", "relationship", "race", "sex", "native_country", "salary"]
 measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week"]
 
 import db_connector
@@ -37,14 +37,17 @@ import query_utils
 try:
     cursor, connection = db_connector.setup_connection()
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
-    for q in queries:
-        print(q)
+    print("Total aggregate views: {}".format(len(queries)))
 
-    cursor.execute("select count(*) from census")
-    rows = cursor.fetchone()
-    print(rows)
+    aggregate_views = query_utils.generate_aggregate_views()
+
+
+    # cursor.execute("select count(*) from census")
+    # rows = cursor.fetchone()
+    # print(rows)
     data_distributor.split_data_by_marital_status(cursor, connection)
-    if(data_distributor.is_dir_empty("../data")):
+
+    if data_distributor.is_dir_empty("../data"):
         data_distributor.split_data(splits)
     
     data_distributor.generate_split_views(cursor, connection, splits)
