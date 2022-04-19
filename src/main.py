@@ -4,10 +4,10 @@ from psycopg2 import Error
 import sys
 
 config = configparser.ConfigParser()
-config.read('../config/seedb_configs.ini')  
+config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
-sys.path.insert(0, path+'/connectors')
-sys.path.insert(1, path+'/src')
+sys.path.insert(0, path + '/connectors')
+sys.path.insert(1, path + '/src')
 splits = config['phased.execution.framework']['splits']
 # Dataset
 #   age INTEGER,
@@ -34,13 +34,13 @@ import db_connector
 import db_disconnector
 import data_distributor
 import query_utils
+
 try:
     cursor, connection = db_connector.setup_connection()
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
     print("Total aggregate views: {}".format(len(queries)))
 
     aggregate_views = query_utils.generate_aggregate_views()
-
 
     # cursor.execute("select count(*) from census")
     # rows = cursor.fetchone()
@@ -49,8 +49,24 @@ try:
 
     if data_distributor.is_dir_empty("../data"):
         data_distributor.split_data(splits)
-    
+
     data_distributor.generate_split_views(cursor, connection, splits)
+
+    # Phased Execution
+    for phase in splits:
+
+        for a in aggregate_views:
+
+            #Sharing based optimization
+            for m in aggregate_views[a]:
+                for f in aggregate_views[a][m]:
+                    # generate query
+                    print("Hi")
+
+            #Pruning based
+
+
+
 
 except (Exception, Error) as error:
     print("Error while connecting to PostgreSQL", error)
