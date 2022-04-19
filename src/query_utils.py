@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+
 
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
@@ -10,6 +13,7 @@ def generate_aggregate_queries(A, M, F, table):
                 queries.append("SELECT {}, {}({}) FROM {} GROUP BY {}".format(a, f, m, table, a))
 
     return queries
+
 
 def execute_queries(cursor, queries):
     data = []
