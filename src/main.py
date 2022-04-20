@@ -71,11 +71,14 @@ try:
             cursor.execute(query)
             rows = cursor.fetchall()
 
-            print([desc[0] for desc in cursor.description])
+            dists = query_utils.transform_data(rows, [desc[0] for desc in cursor.description])
+            # print([desc[0] for desc in cursor.description])
 
-            for row in rows:
-                print(row)
-                print()
+            # print(dists)
+            #
+            # for row in rows:
+            #     print(row)
+            #     print()
 
         # Pruning based optimization
 
