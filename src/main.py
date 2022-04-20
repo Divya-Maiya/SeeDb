@@ -8,7 +8,7 @@ config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
 sys.path.insert(0, path + '/connectors')
 sys.path.insert(1, path + '/src')
-splits = config['phased.execution.framework']['splits']
+splits = int(config['phased.execution.framework']['splits'])
 # Dataset
 #   age INTEGER,
 #   workclass CHAR(50),
@@ -34,6 +34,7 @@ import db_connector
 import db_disconnector
 import data_distributor
 import query_utils
+import query_generator
 
 try:
     cursor, connection = db_connector.setup_connection()
@@ -53,7 +54,7 @@ try:
     data_distributor.generate_split_views(cursor, connection, splits)
 
     # Phased Execution
-    for phase in range(2):
+    for phase in range(splits):
 
         for a in aggregate_views:
 
@@ -65,17 +66,7 @@ try:
 
             query_params = query_params[:-2]
 
-            query = """SELECT {}, {},
-            CASE marital_status
-                when ' Married-civ-spouse' then 1
-                when ' Married-spouse-absent' then 1
-                when ' Married-AF-spouse' then 1
-                when ' Separated' then 1
-            ELSE 0
-            END as g1, 1 AS g2
-            FROM split_view{} 
-            WHERE not {}='?' 
-            GROUP BY {}, g1, g2""".format(a, query_params, phase + 1, a, a)
+            query = query_generator.get_target_reference_merged_query(a, query_params, phase)
 
             cursor.execute(query)
             rows = cursor.fetchall()
