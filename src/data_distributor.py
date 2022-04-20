@@ -31,13 +31,15 @@ def is_dir_empty(path):
 
 def generate_split_views(cursor, connection, splits):
     for i in range(1, splits + 1):
-        cursor.execute(query_generator.get_split_view_query(i))
+        query = query_generator.get_split_view_query(i)
+        cursor.execute(query)
         connection.commit()
         f = open('../data/test_split_{}.csv'.format(i), 'r')
         cursor.copy_from(f, 'split_view{}'.format(i), sep=',')
         connection.commit()
         f.close()
-        cursor.execute(query_generator.get_married_umarried_view_generator_query(i))
+        query = query_generator.get_married_umarried_view_generator_query(i)
+        cursor.execute(query)
         connection.commit()
 
 
