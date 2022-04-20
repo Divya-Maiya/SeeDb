@@ -49,6 +49,52 @@ def convert_rows_to_df(data_rows, cols):
     return df
 
 
+# Given data in the form:
+# attribute_type(Ex: female), f1(m1), f1(m2).., f1(m5), f2(m1),..f2(m5)..,f5(m5), married/unmarried
+# Output:
+def transform_data(data, cols):
+    # Example data
+    # workclass A, sum(age), min(age), max(age),.., sum(capital_gain)..
+    # Convert to database
+    df = pd.DataFrame(data, columns=cols)
+
+    # Separate married/unmarried rows
+    df_married = df[df.iloc[:, -1] == 1]
+    df_unmarried = df[df.iloc[:, -1] == 0]
+
+    # Get all rows for each attribute
+    agg_functions = ["sum", "min", "max", "avg", "count"]
+    dim_attr = ["workclass", "education", "marital_status", "occupation", "relationship", "race", "sex",
+                "native_country",
+                "salary"]
+    measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week"]
+    result = pd.DataFrame()
+    result["attributes"] = df[:, 1]
+    attribute_aggregates = pd.DataFrame()
+
+    result_col = pd.DataFrame()
+
+    for index in range(1, df_married.shape[1]-1):
+        column_obj = df_married.iloc[:, index]
+        result["aggregate"] = column_obj.values
+
+
+
+
+    # Sample output: attribute_rows
+    # [
+    #   [workclass A, sum(age), min(age)..., 0]
+    #   [workclass B, sum(age), min(age)..., 0]
+    #    ...
+    #   [workclass z, sum(age), min(age)..., 0]
+    # ]
+
+
+
+    # KL Divergence needs data in the form
+    # [[attribute, fi(mj)][attribute, fi(mj)]] - for married and unmarried
+
+
 # Given the result of executing a query on both tables (married/unmarried), find the KL divergence
 # Example Queries:
 # target: select sex, avg(capital_gain) from census where marital_status LIKE '%Never-married%' group by sex;
