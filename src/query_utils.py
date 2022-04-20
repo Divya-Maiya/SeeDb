@@ -94,7 +94,8 @@ def kl_divergence(data, cols):
 
         # Apply the formula for KL Divergence
         # Refer https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-        return np.sum([qi * np.log(pi / qi) for qi, pi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
+        # pi refers to probabilities concerning the target and qi references that of reference.
+        return np.sum([pi * np.log(pi / qi) for pi, qi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
 
 
 # Bar charts for married/unmarried views Data and col values as obtained from executing the both target and reference
