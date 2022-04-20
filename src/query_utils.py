@@ -60,7 +60,6 @@ def kl_divergence(data, cols):
 
     # for now this will compare queries with only 1 aggregate attribute (ex: avg)
     # TODO: extension to include multiple aggregate attributes in a single query
-    # TODO: Manually check if the value for KL Divergence is right
     target_cols = []
     for col in ["sum", "min", "max", "avg", "count"]:
         if col in target_df:
