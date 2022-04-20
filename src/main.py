@@ -40,12 +40,12 @@ try:
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
     print("Total aggregate views: {}".format(len(queries)))
 
-    aggregate_views = query_utils.generate_aggregate_views()
-
+    aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
+    # print(aggregate_views)
     # cursor.execute("select count(*) from census")
     # rows = cursor.fetchone()
     # print(rows)
-    data_distributor.split_data_by_marital_status(cursor, connection)
+    # data_distributor.split_data_by_marital_status(cursor, connection)
 
     if data_distributor.is_dir_empty("../data"):
         data_distributor.split_data(splits)
@@ -53,17 +53,41 @@ try:
     data_distributor.generate_split_views(cursor, connection, splits)
 
     # Phased Execution
-    for phase in splits:
+    for phase in range(2):
 
         for a in aggregate_views:
 
-            #Sharing based optimization
+            # Sharing based optimization
+            query_params = ""
             for m in aggregate_views[a]:
                 for f in aggregate_views[a][m]:
-                    # generate query
-                    print("Hi")
+                    query_params += "{}({}) as {}_{}, ".format(f, m, f, m)
 
-            #Pruning based
+            query_params = query_params[:-2]
+
+            query = """SELECT {}, {},
+            CASE marital_status
+                when ' Married-civ-spouse' then 1
+                when ' Married-spouse-absent' then 1
+                when ' Married-AF-spouse' then 1
+                when ' Separated' then 1
+            ELSE 0
+            END as g1, 1 AS g2
+            FROM split_view{} 
+            WHERE not {}='?' 
+            GROUP BY {}, g1, g2""".format(a, query_params, phase + 1, a, a)
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            print([desc[0] for desc in cursor.description])
+
+            for row in rows:
+                print(row)
+                print()
+
+        # Pruning based optimization
+
 
 
 
