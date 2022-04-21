@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import entropy
 
+
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
     print("Generating aggregate queries")
@@ -95,7 +96,7 @@ def transform_data(data, cols):
         distance[cols[index]] = kl_divergence(target_df, reference_df)
 
     # print("--------------")
-    print(distance)
+    # print(distance)
     return distance
     # for index in range(1, df_unmarried.shape[1]-1):
     #     column_obj = df_unmarried.iloc[:, index]
@@ -194,7 +195,6 @@ def transform_data(data, cols):
 #         return -0.
 
 def kl_divergence(p1, p2):
-
     # if len(p1) > len(p2):
     #     np.pad(p2, (0, len(p1) - len(p2)), mode='constant', constant_values=0)
     # else:
@@ -214,12 +214,13 @@ def kl_divergence(p1, p2):
 
     # print(p2)
     eps = 1e-5
-    p1 = p1/(np.sum(p1)+eps)
-    p2 = p2/(np.sum(p2)+eps)
-    p1[np.where(p1<eps)] = eps
-    p2[np.where(p2<eps)] = eps
+    p1 = p1 / (np.sum(p1) + eps)
+    p2 = p2 / (np.sum(p2) + eps)
+    p1[np.where(p1 < eps)] = eps
+    p2[np.where(p2 < eps)] = eps
     kl_divg = entropy(p1, p2)
     return kl_divg
+
 
 # Bar charts for married/unmarried views Data and col values as obtained from executing the both target and reference
 # queries should be the input for this function
