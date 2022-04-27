@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import entropy
-
+import query_generator
 
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
@@ -225,27 +225,70 @@ def kl_divergence(p1, p2):
 # Bar charts for married/unmarried views Data and col values as obtained from executing the both target and reference
 # queries should be the input for this function
 # Similar to Fig 1 in the Reference paper
-def visualize_data(data, cols, title="Average Capital Gain Group by Sex"):
-    # % matplotlib inline
-    plt.style.use('ggplot')
-    N = 2
+# def visualize_data(data, cols, title="Average Capital Gain Group by Sex"):
+#     # % matplotlib inline
+#     plt.style.use('ggplot')
+#     N = 2
+#     aggregate = cols[1]
+#     df = convert_rows_to_df(data, cols)
 
-    aggregate = cols[1]
-    df = convert_rows_to_df(data, cols)
+#     unmarried = df[0][aggregate]
+#     married = df[1][aggregate]
 
-    unmarried = df[0][aggregate]
-    married = df[1][aggregate]
+#     ind = np.arange(N)
+#     width = 0.35
+#     plt.bar(ind, unmarried, width, label='Unmarried')
+#     plt.bar(ind + width, married, width,
+#             label='Married')
 
-    ind = np.arange(N)
-    width = 0.35
-    plt.bar(ind, unmarried, width, label='Unmarried')
-    plt.bar(ind + width, married, width,
-            label='Married')
+#     plt.ylabel(aggregate)
+#     plt.xlabel('Sex')
+#     plt.title(title)
 
-    plt.ylabel(aggregate)
-    plt.xlabel('Sex')
-    plt.title(title)
+#     plt.xticks(ind + width / 2, ('Female', 'Male'))
+#     plt.legend(loc='best')
+#     plt.show()
 
-    plt.xticks(ind + width / 2, ('Female', 'Male'))
-    plt.legend(loc='best')
-    plt.show()
+def visualize_data(connection, cursor, a, f, m):
+    print("Visualizing {} v/s {}({})".format(a,f,m))
+
+    cursor.execute(query_generator.get_married_data(a,f,m))
+    married_views = cursor.fetchall()
+    cursor.execute(query_generator.get_unmarried_data(a,f,m))
+    unmarried_views = cursor.fetchall()
+    print(married_views)
+    order_keys = set()
+
+    for pair in married_views:
+        order_keys.add(pair[0].strip())
+    for pair in unmarried_views:
+        order_keys.add(pair[0].strip())
+
+    married_dict = {}
+    unmarried_dict = {}
+    for pair in married_views:
+        married_dict[pair[0].strip()] = pair[1]
+
+    for pair in unmarried_views:
+        unmarried_dict[pair[0].strip()] = pair[1]
+
+    married_vals = []
+    unmarried_vals = []
+
+    for key in order_keys:
+        if key in married_dict:
+            married_vals.append(float(married_dict[key]))
+        else:
+            married_vals.append(float(0))
+
+        if key in unmarried_dict:
+           unmarried_vals.append(float(unmarried_dict[key]))
+        else:
+            unmarried_vals.append(float(0))
+    
+    df = pd.DataFrame({a: list(order_keys), 'Married': married_vals,'Unmarried': unmarried_vals})
+    
+    print(df)
+
+    # plotting graph
+    df.plot(x=a, y=["Married", "Unmarried"], kind="bar")

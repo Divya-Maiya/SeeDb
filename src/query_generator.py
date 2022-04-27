@@ -27,4 +27,21 @@ def get_target_reference_merged_query(a, query_params, phase):
            from split_view{} 
            where not {}=' ?' 
            group by {}, g1, g2
-           """.format(a, query_params, phase + 1, a, a)
+           order by {}
+           """.format(a, query_params, phase + 1, a, a, a)
+
+def get_married_data(a,f,m):
+    return """
+           select {}, {}({})
+           from census c
+           where c.marital_status in (' Married-AF-spouse', ' Married-civ-spouse', ' Married-spouse-absent',' Separated') and c.{} != ' ?'
+           group by {}
+           """.format(a,f,m,a, a)
+
+def get_unmarried_data(a,f,m):
+    return """
+           select {}, {}({})
+           from census c
+           where c.marital_status in (' Never-married', ' Widowed',' Divorced') and c.{} != ' ?'
+           group by {}
+           """.format(a,f,m,a, a)

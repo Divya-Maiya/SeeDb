@@ -146,8 +146,22 @@ try:
                     del aggregate_views[s[0][0]][s[0][1]]
                 if len(aggregate_views[s[0][0]]) == 0:
                     del aggregate_views[s[0][0]]
+        count  = 0
+        for a in aggregate_views:
+            for m in aggregate_views[a]:
+                count += len(aggregate_views[a][m])
+        # print(count)
 
     print(aggregate_views)
+    final_views = []
+    c = 0
+    for a in aggregate_views:
+            for m in aggregate_views[a]:
+                for f in aggregate_views[a][m]:
+                    if c==0:
+                        query_utils.visualize_data(connection, cursor, a,f,m)
+                    c+=1
+    
 
 
 # except (Exception, Error) as error:
