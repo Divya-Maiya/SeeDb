@@ -18,4 +18,4 @@ create table Census(
 	salary CHAR(50)
 );
 
-\copy Census FROM adult_data.txt with (DELIMITER(','));
+\copy Census FROM adult.data with (DELIMITER(','));

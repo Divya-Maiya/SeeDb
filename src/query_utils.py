@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import entropy
 import query_generator
 
+
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
     print("Generating aggregate queries")
@@ -250,11 +251,11 @@ def kl_divergence(p1, p2):
 #     plt.show()
 
 def visualize_data(connection, cursor, a, f, m):
-    print("Visualizing {} v/s {}({})".format(a,f,m))
+    print("Visualizing {} v/s {}({})".format(a, f, m))
 
-    cursor.execute(query_generator.get_married_data(a,f,m))
+    cursor.execute(query_generator.get_married_data(a, f, m))
     married_views = cursor.fetchall()
-    cursor.execute(query_generator.get_unmarried_data(a,f,m))
+    cursor.execute(query_generator.get_unmarried_data(a, f, m))
     unmarried_views = cursor.fetchall()
     print(married_views)
     order_keys = set()
@@ -282,13 +283,25 @@ def visualize_data(connection, cursor, a, f, m):
             married_vals.append(float(0))
 
         if key in unmarried_dict:
-           unmarried_vals.append(float(unmarried_dict[key]))
+            unmarried_vals.append(float(unmarried_dict[key]))
         else:
             unmarried_vals.append(float(0))
-    
-    df = pd.DataFrame({a: list(order_keys), 'Married': married_vals,'Unmarried': unmarried_vals})
-    
-    print(df)
+
+    # df = pd.DataFrame({a: list(order_keys), 'Married': married_vals, 'Unmarried': unmarried_vals})
+
+    # print(df)
 
     # plotting graph
-    df.plot(x=a, y=["Married", "Unmarried"], kind="bar")
+    # df.plot(x=a, y=["Married", "Unmarried"], kind="bar")
+
+    X_axis = np.arange(len(list(order_keys)))
+
+    plt.bar(X_axis - 0.2, married_vals, 0.4, label='Married')
+    plt.bar(X_axis + 0.2, unmarried_vals, 0.4, label='Unmarried')
+
+    plt.xticks(X_axis, order_keys, rotation='vertical')
+    plt.xlabel(a)
+    plt.ylabel(f + "(" + m + ")")
+    plt.title(a + " vs " + f + "(" + m + ")")
+    plt.legend()
+    plt.show()
