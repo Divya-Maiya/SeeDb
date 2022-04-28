@@ -154,13 +154,12 @@ try:
 
     print(aggregate_views)
     final_views = []
-    c = 0
+
     for a in aggregate_views:
         for m in aggregate_views[a]:
             for f in aggregate_views[a][m]:
-                if c == 0:
-                    query_utils.visualize_data(connection, cursor, a, f, m)
-                c += 1
+                query_utils.visualize_data(connection, cursor, a, f, m)
+
 
 
 
