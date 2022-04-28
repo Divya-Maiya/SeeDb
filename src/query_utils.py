@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import entropy
+from scipy.stats import entropy, wasserstein_distance
 import query_generator
 
 
@@ -92,108 +92,38 @@ def transform_data(data, cols):
         target_df["aggregate"] = married_col.values
 
         reference_df["aggregate"] = unmarried_col.values
-        # print(target_df.head())
-        # print(cols[index])
-        distance[cols[index]] = kl_divergence(target_df, reference_df)
+        distance[cols[index]] = emd_distance(target_df, reference_df)
 
     # print("--------------")
     # print(distance)
     return distance
-    # for index in range(1, df_unmarried.shape[1]-1):
-    #     column_obj = df_unmarried.iloc[:, index]
-    #     result["unmarried"]["aggregate"] = column_obj.values
-
-    # Sample output: attribute_rows
-    # [
-    #   [workclass A, sum(age), min(age)..., 0]
-    #   [workclass B, sum(age), min(age)..., 0]
-    #    ...
-    #   [workclass z, sum(age), min(age)..., 0]
-    # ]
-
-    # KL Divergence needs data in the form
-    # [[attribute, fi(mj)][attribute, fi(mj)]] - for married and unmarried
 
 
 # Given the result of executing a query on both tables (married/unmarried), find the KL divergence
 # Example Queries:
 # target: select sex, avg(capital_gain) from census where marital_status LIKE '%Never-married%' group by sex;
 # ref: select sex, avg(capital_gain) from census where marital_status LIKE '%Married%' group by sex;
-# def kl_divergence(target_df, reference_df):
-#     # df = convert_rows_to_df(data, cols)
-#     # target_df = df["married"]
-#     # reference_df = df["unmarried"]
-#     # print(target_df.head())
-#     # for now this will compare queries with only 1 aggregate attribute (ex: avg)
-#     # TODO: extension to include multiple aggregate attributes in a single query
-#     # target_cols = []
-#     # for col in ["sum", "min", "max", "avg", "count"]:
-#     #     if col in target_df:
-#     #         target_cols.append(col)
-#
-#     target_vals = target_df["aggregate"]
-#     reference_vals = reference_df["aggregate"]
-#
-#     tgt = np.array(target_vals)
-#     ref = np.array(reference_vals)
-#
-#     if np.sum(tgt) != 0:
-#         tgt_prob = tgt / np.sum(tgt)
-#         ref_prob = ref / np.sum(ref)
-#
-#         tgt_prob = tgt_prob.astype(float)
-#         ref_prob = ref_prob.astype(float)
-#
-#         return np.sum([pi * np.log(pi / qi) for pi, qi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
-#
-#     else:
-#         return 0
-#
-#     # for col in target_cols:
-#     #     target_vals = target_df[col]
-#     #     reference_vals = reference_df[col]
-#     #
-#     #     # Value of the aggregate function from both the target and reference views
-#     #     tgt = np.array(target_vals)
-#     #     ref = np.array(reference_vals)
-#     #
-#     #     # Normalize value of the aggregate function to get a probability distribution
-#     #     tgt_prob = tgt / np.sum(tgt)
-#     #     ref_prob = ref / np.sum(ref)
-#     #
-#     #     tgt_prob = tgt_prob.astype(float)
-#     #     ref_prob = ref_prob.astype(float)
-#     #
-#     #     print(tgt_prob)
-#     #     # sum = 0
-#     #     # for qi, pi in zip(tgt_prob, ref_prob):
-#     #     #     print(pi)
-#     #     #     print(qi)
-#     #     #     print(pi / qi)
-#     #     #     # pi.float()
-#     #     #     # qi.float()
-#     #     #     sum += qi * np.log(pi / qi)
-#     #     # return sum
-#     #
-#     #     # Apply the formula for KL Divergence
-#     #     # Refer https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-#     #     # pi refers to probabilities concerning the target and qi references that of reference.
-#     #     return np.sum([pi * np.log(pi / qi) for pi, qi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
+def emd_distance(p1, p2):
+    m = max(len(p1), len(p2))
+    p1 = np.array(p1["aggregate"])
+    p1.resize(m)
 
-# def kl_divergence(target_val, reference_val):
-#     tgt = np.array(target_val["aggregate"])
-#     ref = np.array(reference_val["aggregate"])
-#
-#     tgt = tgt.reshape(-1)
-#     ref = ref.reshape(-1)
-#
-#     if np.sum(tgt) > 0 and np.sum(ref) > 0:
-#         tgt_prob = tgt / np.sum(tgt)
-#         ref_prob = ref / np.sum(ref)
-#
-#         return -np.sum([qi * np.log(pi/qi) for qi, pi in zip(tgt_prob, ref_prob) if pi > 0 and qi > 0])
-#     else:
-#         return -0.
+    p2 = np.array(p2["aggregate"])
+    p2.resize(m)
+
+    p1 = p1.tolist()
+    p2 = p2.tolist()
+
+    # print(p1)
+
+    # print(p2)
+    eps = 1e-5
+    p1 = p1 / (np.sum(p1) + eps)
+    p2 = p2 / (np.sum(p2) + eps)
+    p1[np.where(p1 < eps)] = eps
+    p2[np.where(p2 < eps)] = eps
+
+    return wasserstein_distance(p1, p2)
 
 def kl_divergence(p1, p2):
     # if len(p1) > len(p2):
