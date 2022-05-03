@@ -55,6 +55,7 @@ try:
     bounds = {}
     for phase in range(splits):
 
+        current_phase = phase + 1
         dist_views = {}
         for a in aggregate_views:
 
@@ -66,11 +67,13 @@ try:
 
             query_params = query_params[:-2]
 
+            # Extension - Query rewriting. Use a single query to fetch data from target and reference dataset
             query = query_generator.get_target_reference_merged_query(a, query_params, phase)
 
             cursor.execute(query)
             rows = cursor.fetchall()
 
+            # Find the distance based on the utility measure - KL Divergence, Earth Mover's distance etc.
             dists = distance_utils.find_distance(rows, [desc[0] for desc in cursor.description])
 
             for agg_key, dist in dists.items():
@@ -94,42 +97,54 @@ try:
                 for f in aggregate_views[a][m]:
                     if phase == 0:
                         continue
-                    # TODO change
-                    em = math.sqrt((1 - (phase + 1 - 1) / splits) * (
-                            2 * math.log(math.log(phase + 1)) + math.log(math.pi ** 2 / (3 * delta))) / (
-                                           2 * (phase + 1)))
-                    lower_bound = dist_views[a][m][f] / (phase + 1) - em
-                    upper_bound = dist_views[a][m][f] / (phase + 1) + em
+
+                    # Hoeffding-Serfling inequality: m = current_phase, N = splits, delta = 1e-5
+
+                    eps_m = math.sqrt((1 - (current_phase - 1) / splits) * (
+                            2 * math.log(math.log(current_phase)) + math.log(math.pow(math.pi, 2) / (3 * delta)))
+                                      / (2 * current_phase))
+
+                    # Get upper and lower bounds
+                    lower_bound = dist_views[a][m][f] / current_phase - eps_m
+                    upper_bound = dist_views[a][m][f] / current_phase + eps_m
 
                     bounds[a, m, f] = (lower_bound, upper_bound)
 
-        sorted_bounds = {k: v for k, v in sorted(bounds.items(), key=lambda item: -1 * item[1][1])}
+        # Sort the bounds
+        sorted_conf_intervals = {k: v for k, v in sorted(bounds.items(), key=lambda item: -1 * item[1][1])}
 
-        if len(sorted_bounds) < k:
+        if len(sorted_conf_intervals) < k:
             continue
 
+        # Find lowest lower bound
         lowestLowerBound = 0.0
-        for i in list(sorted_bounds.items())[:k]:
+        for i in list(sorted_conf_intervals.items())[:k]:
             lowestLowerBound = min(lowestLowerBound, i[1][0])
 
-        for s in list(sorted_bounds.items())[k:]:
-            if s[1][1] < lowestLowerBound or phase == splits - 1:
+        # Iterate and prune out
+        for s in list(sorted_conf_intervals.items())[k:]:
+            if s[1][1] < lowestLowerBound or current_phase == splits:
                 del bounds[s[0]]
+
                 func = aggregate_views[s[0][0]][s[0][1]]
                 func.remove(s[0][2])
                 aggregate_views[s[0][0]][s[0][1]] = func
+
                 if len(aggregate_views[s[0][0]][s[0][1]]) == 0:
                     del aggregate_views[s[0][0]][s[0][1]]
+
                 if len(aggregate_views[s[0][0]]) == 0:
                     del aggregate_views[s[0][0]]
+
+        # Get count of current views in consideration
         count = 0
         for a in aggregate_views:
             for m in aggregate_views[a]:
                 count += len(aggregate_views[a][m])
 
     print(aggregate_views)
-    final_views = []
 
+    # Visualize the top k views left after all phases
     for a in aggregate_views:
         for m in aggregate_views[a]:
             for f in aggregate_views[a][m]:
