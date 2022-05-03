@@ -1,8 +1,13 @@
 import configparser
-import psycopg2
-from psycopg2 import Error
 import sys
 import math
+import db_connector
+import db_disconnector
+import data_distributor
+import query_utils
+import query_generator
+import distance_utils
+import visualize
 
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
@@ -10,7 +15,8 @@ path = config['local.paths']['basepath']
 sys.path.insert(0, path + '/connectors')
 sys.path.insert(1, path + '/src')
 splits = int(config['phased.execution.framework']['splits'])
-# Dataset
+
+# Census Dataset
 #   age INTEGER,
 #   workclass CHAR(50),
 # 	fnlwgt INTEGER,
@@ -33,31 +39,19 @@ measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week
 delta = 1e-5
 k = 5
 
-import db_connector
-import db_disconnector
-import data_distributor
-import query_utils
-import query_generator
-
 try:
     cursor, connection = db_connector.setup_connection()
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
     print("Total aggregate views: {}".format(len(queries)))
 
     aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
-    # print(aggregate_views)
-    # cursor.execute("select count(*) from census")
-    # rows = cursor.fetchone()
-    # print(rows)
-    # data_distributor.split_data_by_marital_status(cursor, connection)
 
-    if data_distributor.is_dir_empty("../data"):
+    if data_distributor.is_dir_empty("../data/census"):
         data_distributor.split_data(splits)
 
     data_distributor.generate_split_views(cursor, connection, splits)
 
     # Phased Execution
-    # phase_wise_dist = []
     bounds = {}
     for phase in range(splits):
 
@@ -77,10 +71,9 @@ try:
             cursor.execute(query)
             rows = cursor.fetchall()
 
-            dists = query_utils.transform_data(rows, [desc[0] for desc in cursor.description])
+            dists = distance_utils.find_distance(rows, [desc[0] for desc in cursor.description])
 
             for agg_key, dist in dists.items():
-                # print(type(agg_key))
                 parts = agg_key.split("$")
                 f = parts[0]
                 m = parts[1]
@@ -96,8 +89,6 @@ try:
 
                 dist_views[a][m][f] += dist
 
-            # phase_wise_dist.append(dist_views)
-
             # Pruning based optimization
             for m in aggregate_views[a]:
                 for f in aggregate_views[a][m]:
@@ -110,25 +101,10 @@ try:
                     lower_bound = dist_views[a][m][f] / (phase + 1) - em
                     upper_bound = dist_views[a][m][f] / (phase + 1) + em
 
-                    # if a not in bounds:
-                    #     bounds[a] = {}
-                    #
-                    # if m not in bounds[a]:
-                    #     bounds[a][m] = {}
-                    #
-                    # if f not in bounds[a][m]:
-                    #     bounds[a][m][f] = ()
-
                     bounds[a, m, f] = (lower_bound, upper_bound)
 
-        # print(bounds)
-        # print()
-        # Sort
         sorted_bounds = {k: v for k, v in sorted(bounds.items(), key=lambda item: -1 * item[1][1])}
-        # sorted_bounds.sort(key=lambda tup: -1 * tup[1][1])
-        # print(sorted_bounds)
 
-        # TODO Ensure k views
         if len(sorted_bounds) < k:
             continue
 
@@ -150,7 +126,6 @@ try:
         for a in aggregate_views:
             for m in aggregate_views[a]:
                 count += len(aggregate_views[a][m])
-        # print(count)
 
     print(aggregate_views)
     final_views = []
@@ -158,12 +133,7 @@ try:
     for a in aggregate_views:
         for m in aggregate_views[a]:
             for f in aggregate_views[a][m]:
-                query_utils.visualize_data(connection, cursor, a, f, m)
+                visualize.visualize_census_data(cursor, a, f, m)
 
-
-
-
-# except (Exception, Error) as error:
-#     print("Error while connecting to PostgreSQL", error)
 finally:
     db_disconnector.teardown_connection(cursor, connection)

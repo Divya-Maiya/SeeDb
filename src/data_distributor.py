@@ -1,17 +1,16 @@
-import configparser
-import psycopg2
-from psycopg2 import Error
 import pandas as pd
 import os
 import numpy as np
 import query_generator
 
+
+# Routine to split the data for phased execution
 def split_data(splits):
-    all_rows = pd.read_csv("../data/adult.data", sep=",")
+    all_rows = pd.read_csv("../data/census/adult.data", sep=",")
 
     df_split = np.array_split(all_rows, splits)
     for i in range(1, len(df_split) + 1):
-        df_split[i - 1].to_csv("../data/test_split_{}.csv".format(i), encoding='utf-8', index=False)
+        df_split[i - 1].to_csv("../data/census/test_split_{}.csv".format(i), encoding='utf-8', index=False)
 
 
 def is_dir_empty(path):
@@ -29,12 +28,13 @@ def is_dir_empty(path):
         return True
 
 
+# Routine to generate splits
 def generate_split_views(cursor, connection, splits):
     for i in range(1, splits + 1):
         query = query_generator.get_split_view_query(i)
         cursor.execute(query)
         connection.commit()
-        f = open('../data/test_split_{}.csv'.format(i), 'r')
+        f = open('../data/census/test_split_{}.csv'.format(i), 'r')
         cursor.copy_from(f, 'split_view{}'.format(i), sep=',')
         connection.commit()
         f.close()
@@ -43,8 +43,10 @@ def generate_split_views(cursor, connection, splits):
         connection.commit()
 
 
+# Routine to split data by marital status - reference and target
+# Currently unused since we implement query rewriting
 def split_data_by_marital_status(cursor, connection):
-    cursor.execute(open("../db_scripts/create_main_views.sql", "r").read())
+    cursor.execute(open("../db_scripts/create_main_views_census.sql", "r").read())
     connection.commit()
 
     cursor.execute("select count(*) from married;")

@@ -1,10 +1,7 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import entropy, wasserstein_distance
-import query_generator
 
 
+# Routine to generate all aggregate queries
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
     print("Generating aggregate queries")
@@ -18,6 +15,7 @@ def generate_aggregate_queries(A, M, F, table):
     return queries
 
 
+# Routine to generate data structure to store all aggregate views
 def generate_aggregate_views(A, M, F):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
 
@@ -34,6 +32,7 @@ def generate_aggregate_views(A, M, F):
     return views
 
 
+# Routine to execute sql queries
 def execute_queries(cursor, queries):
     data = []
     for query in queries:
@@ -44,194 +43,9 @@ def execute_queries(cursor, queries):
     return data, columns
 
 
+# Routine to convert sql rows to dataframe
 def convert_rows_to_df(data_rows, cols):
     df = []
     for data in data_rows:
         df.append(pd.DataFrame(data, columns=cols))
     return df
-
-
-# Given data in the form:
-# attribute_type(Ex: female), f1(m1), f1(m2).., f1(m5), f2(m1),..f2(m5)..,f5(m5), married/unmarried
-# Output:
-def transform_data(data, cols):
-    # Example data
-    # workclass A, sum(age), min(age), max(age),.., sum(capital_gain)..
-    # Convert to database
-    df = pd.DataFrame(data)
-
-    # Separate married/unmarried rows
-    df_married = df[df.iloc[:, -2] == 1]
-    df_unmarried = df[df.iloc[:, -2] == 0]
-
-    # print(df_married.head())
-    # print("------------------------------------")
-    # print(df_unmarried.head())
-    # print("------------------------------------")
-    # Get all rows for each attribute
-
-    target_df = pd.DataFrame()
-    reference_df = pd.DataFrame()
-    # print(df[0])
-
-    # target_df["attributes"] = df_married[0]
-    # reference_df["attributes"] = df_unmarried[0]
-    # print(target_df)
-    # print(len(target_df["attributes"]))
-    # result["attributes"] = df[:, 0]
-
-    # print(result.head())
-    #
-    distance = {}
-    # print(df.shape[1])
-    #
-    for index in range(1, df.shape[1] - 2):
-        married_col = df_married.iloc[:, index]
-        unmarried_col = df_unmarried.iloc[:, index]
-        # print(len(married_col.values))
-        target_df["aggregate"] = married_col.values
-
-        reference_df["aggregate"] = unmarried_col.values
-        distance[cols[index]] = emd_distance(target_df, reference_df)
-
-    # print("--------------")
-    # print(distance)
-    return distance
-
-
-# Given the result of executing a query on both tables (married/unmarried), find the KL divergence
-# Example Queries:
-# target: select sex, avg(capital_gain) from census where marital_status LIKE '%Never-married%' group by sex;
-# ref: select sex, avg(capital_gain) from census where marital_status LIKE '%Married%' group by sex;
-def emd_distance(p1, p2):
-    m = max(len(p1), len(p2))
-    p1 = np.array(p1["aggregate"])
-    p1.resize(m)
-
-    p2 = np.array(p2["aggregate"])
-    p2.resize(m)
-
-    p1 = p1.tolist()
-    p2 = p2.tolist()
-
-    # print(p1)
-
-    # print(p2)
-    eps = 1e-5
-    p1 = p1 / (np.sum(p1) + eps)
-    p2 = p2 / (np.sum(p2) + eps)
-    p1[np.where(p1 < eps)] = eps
-    p2[np.where(p2 < eps)] = eps
-
-    return wasserstein_distance(p1, p2)
-
-def kl_divergence(p1, p2):
-    # if len(p1) > len(p2):
-    #     np.pad(p2, (0, len(p1) - len(p2)), mode='constant', constant_values=0)
-    # else:
-    #     np.pad(p1, (0, len(p2) - len(p1)), mode='constant', constant_values=0)
-
-    m = max(len(p1), len(p2))
-    p1 = np.array(p1["aggregate"])
-    p1.resize(m)
-
-    p2 = np.array(p2["aggregate"])
-    p2.resize(m)
-
-    p1 = p1.tolist()
-    p2 = p2.tolist()
-
-    # print(p1)
-
-    # print(p2)
-    eps = 1e-5
-    p1 = p1 / (np.sum(p1) + eps)
-    p2 = p2 / (np.sum(p2) + eps)
-    p1[np.where(p1 < eps)] = eps
-    p2[np.where(p2 < eps)] = eps
-    kl_divg = entropy(p1, p2)
-    return kl_divg
-
-
-# Bar charts for married/unmarried views Data and col values as obtained from executing the both target and reference
-# queries should be the input for this function
-# Similar to Fig 1 in the Reference paper
-# def visualize_data(data, cols, title="Average Capital Gain Group by Sex"):
-#     # % matplotlib inline
-#     plt.style.use('ggplot')
-#     N = 2
-#     aggregate = cols[1]
-#     df = convert_rows_to_df(data, cols)
-
-#     unmarried = df[0][aggregate]
-#     married = df[1][aggregate]
-
-#     ind = np.arange(N)
-#     width = 0.35
-#     plt.bar(ind, unmarried, width, label='Unmarried')
-#     plt.bar(ind + width, married, width,
-#             label='Married')
-
-#     plt.ylabel(aggregate)
-#     plt.xlabel('Sex')
-#     plt.title(title)
-
-#     plt.xticks(ind + width / 2, ('Female', 'Male'))
-#     plt.legend(loc='best')
-#     plt.show()
-
-def visualize_data(connection, cursor, a, f, m):
-    print("Visualizing {} v/s {}({})".format(a, f, m))
-
-    cursor.execute(query_generator.get_married_data(a, f, m))
-    married_views = cursor.fetchall()
-    cursor.execute(query_generator.get_unmarried_data(a, f, m))
-    unmarried_views = cursor.fetchall()
-    print(married_views)
-    order_keys = set()
-
-    for pair in married_views:
-        order_keys.add(pair[0].strip())
-    for pair in unmarried_views:
-        order_keys.add(pair[0].strip())
-
-    married_dict = {}
-    unmarried_dict = {}
-    for pair in married_views:
-        married_dict[pair[0].strip()] = pair[1]
-
-    for pair in unmarried_views:
-        unmarried_dict[pair[0].strip()] = pair[1]
-
-    married_vals = []
-    unmarried_vals = []
-
-    for key in order_keys:
-        if key in married_dict:
-            married_vals.append(float(married_dict[key]))
-        else:
-            married_vals.append(float(0))
-
-        if key in unmarried_dict:
-            unmarried_vals.append(float(unmarried_dict[key]))
-        else:
-            unmarried_vals.append(float(0))
-
-    # df = pd.DataFrame({a: list(order_keys), 'Married': married_vals, 'Unmarried': unmarried_vals})
-
-    # print(df)
-
-    # plotting graph
-    # df.plot(x=a, y=["Married", "Unmarried"], kind="bar")
-
-    X_axis = np.arange(len(list(order_keys)))
-
-    plt.bar(X_axis - 0.2, married_vals, 0.4, label='Married')
-    plt.bar(X_axis + 0.2, unmarried_vals, 0.4, label='Unmarried')
-
-    plt.xticks(X_axis, order_keys, rotation='vertical')
-    plt.xlabel(a)
-    plt.ylabel(f + "(" + m + ")")
-    plt.title(a + " vs " + f + "(" + m + ")")
-    plt.legend()
-    plt.show()
