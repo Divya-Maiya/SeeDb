@@ -40,7 +40,7 @@ delta = 1e-5
 k = 5
 
 try:
-    cursor, connection = db_connector.setup_connection()
+    cursor, connection = db_connector.setup_connection('seedb_database_census')
     queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
     print("Total aggregate views: {}".format(len(queries)))
 
