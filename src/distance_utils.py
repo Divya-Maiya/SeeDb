@@ -11,8 +11,8 @@ def find_distance(data, cols):
     df = pd.DataFrame(data)
 
     # Separate married/unmarried rows
-    df_married = df[df.iloc[:, -2] == 1]
-    df_unmarried = df[df.iloc[:, -2] == 0]
+    df_target = df[df.iloc[:, -2] == 1]
+    df_reference = df[df.iloc[:, -2] == 0]
 
     target_df = pd.DataFrame()
     reference_df = pd.DataFrame()
@@ -20,8 +20,8 @@ def find_distance(data, cols):
     distance = {}
 
     for index in range(1, df.shape[1] - 2):
-        married_col = df_married.iloc[:, index]
-        unmarried_col = df_unmarried.iloc[:, index]
+        married_col = df_target.iloc[:, index]
+        unmarried_col = df_reference.iloc[:, index]
 
         target_df["aggregate"] = married_col.values
 

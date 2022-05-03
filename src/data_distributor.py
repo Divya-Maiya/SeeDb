@@ -29,16 +29,19 @@ def is_dir_empty(path):
 
 
 # Routine to generate splits
-def generate_split_views(cursor, connection, splits):
+def generate_split_views(cursor, connection, splits, dir):
     for i in range(1, splits + 1):
         query = query_generator.get_split_view_query(i)
         cursor.execute(query)
         connection.commit()
-        f = open('../data/census/test_split_{}.csv'.format(i), 'r')
+        f = open('../data/{}/test_split_{}.csv'.format(dir, i), 'r')
         cursor.copy_from(f, 'split_view{}'.format(i), sep=',')
         connection.commit()
         f.close()
-        query = query_generator.get_married_umarried_view_generator_query(i)
+        if dir == 'census':
+            query = query_generator.get_married_umarried_view_generator_query(i)
+        else:
+            query = query_generator.get_type0_type13_query(i)
         cursor.execute(query)
         connection.commit()
 

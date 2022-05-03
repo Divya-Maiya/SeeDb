@@ -14,7 +14,14 @@ def get_married_umarried_view_generator_query(i):
            """.format(i, i, i, i, i, i)
 
 
-def get_target_reference_merged_query(a, query_params, phase):
+# TODO Chirag
+def get_type0_type13_query(i):
+    return '''
+    '''
+
+
+# Extension - Query Rewriting to use a single query for target and reference dataset
+def get_target_reference_merged_query_census(a, query_params, phase):
     return """
            select {}, {},
            case marital_status
@@ -29,6 +36,12 @@ def get_target_reference_merged_query(a, query_params, phase):
            group by {}, g1, g2
            order by {}
            """.format(a, query_params, phase + 1, a, a, a)
+
+
+# ToDO Chirag
+def get_target_reference_merged_query_dblp(a, query_params, phase):
+    return '''
+    '''
 
 
 def get_married_data(a, f, m):
