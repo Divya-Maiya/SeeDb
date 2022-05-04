@@ -14,10 +14,13 @@ def get_married_umarried_view_generator_query(i):
            """.format(i, i, i, i, i, i)
 
 
-# TODO Chirag
 def get_type0_type13_query(i):
-    return '''
-    '''
+    return """
+           drop table if exists split_type0_{};
+           drop table if exists split_type13_{};
+           create table split_type0_{} as (select * from split_view{} where venue_type = 0);
+           create table split_type12_{} as (select * from split_view{} where venue_type in  (1, 3));
+           """.format(i, i, i, i, i, i)
 
 
 # Extension - Query Rewriting to use a single query for target and reference dataset
@@ -38,10 +41,18 @@ def get_target_reference_merged_query_census(a, query_params, phase):
            """.format(a, query_params, phase + 1, a, a, a)
 
 
-# ToDO Chirag
 def get_target_reference_merged_query_dblp(a, query_params, phase):
-    return '''
-    '''
+    return """
+               select {}, {},
+               case venue_type
+               when 0 then 1
+               else 0
+               end as g1, 1 AS g2
+               from split_view{} 
+               where not {}=' ' 
+               group by {}, g1, g2
+               order by {}
+               """.format(a, query_params, phase + 1, a, a, a)
 
 
 def get_married_data(a, f, m):
