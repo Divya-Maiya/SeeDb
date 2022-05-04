@@ -47,9 +47,9 @@ try:
     aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
     if data_distributor.is_dir_empty("../data/census"):
-        data_distributor.split_data(splits)
+        data_distributor.split_data(splits,"adult.data","census",',')
 
-    data_distributor.generate_split_views(cursor, connection, splits, 'census')
+    data_distributor.generate_split_views(cursor, connection, splits, 'census',',','split_view')
 
     # Phased Execution
     bounds = {}

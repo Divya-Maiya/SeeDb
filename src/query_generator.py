@@ -4,6 +4,12 @@ def get_split_view_query(i):
            create table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, salary text);
            """.format(i, i, i, i)
 
+def get_split_view_dblp_query(i):
+    return """
+           drop table if exists split_view_dblp{};
+           create table split_view_dblp{} (year text, school text, venue text, author text, pages real, title text, coauthors real, venue_type real);
+           """.format(i, i)
+
 
 def get_married_umarried_view_generator_query(i):
     return """
@@ -48,11 +54,11 @@ def get_target_reference_merged_query_dblp(a, query_params, phase):
                when 0 then 1
                else 0
                end as g1, 1 AS g2
-               from split_view{} 
-               where not {}=' ' 
+               from split_view_dblp{} 
+               where not {}=' ' and not {}='' 
                group by {}, g1, g2
                order by {}
-               """.format(a, query_params, phase + 1, a, a, a)
+               """.format(a, query_params, phase + 1, a, a, a, a)
 
 
 def get_married_data(a, f, m):

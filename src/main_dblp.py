@@ -30,9 +30,9 @@ try:
     aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
     if data_distributor.is_dir_empty("../data/dblp"):
-        data_distributor.split_data(splits)
+        data_distributor.split_data(splits,"cleaned_final_view.data","dblp",'#')
 
-    data_distributor.generate_split_views(cursor, connection, splits, 'dblp')
+    data_distributor.generate_split_views(cursor, connection, splits, 'dblp','#','split_view_dblp')
 
     # Phased Execution
     bounds = {}
