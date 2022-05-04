@@ -4,6 +4,7 @@ def get_split_view_query(i):
            create table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, salary text);
            """.format(i, i, i, i)
 
+
 def get_split_view_dblp_query(i):
     return """
            drop table if exists split_view_dblp{};
@@ -77,3 +78,21 @@ def get_unmarried_data(a, f, m):
            where c.marital_status in (' Never-married', ' Widowed',' Divorced') and c.{} != ' ?'
            group by {}
            """.format(a, f, m, a, a)
+
+
+def get_type0_data(a, f, m):
+    return """
+           select {}, {}({})
+           from dblp d
+           where d.venue_type = 0
+           group by {}
+           """.format(a, f, m, a)
+
+
+def get_type13_data(a, f, m):
+    return """
+           select {}, {}({})
+           from dblp d
+           where d.venue_type in (1, 3)
+           group by {}
+           """.format(a, f, m, a)

@@ -131,7 +131,7 @@ try:
     for a in aggregate_views:
         for m in aggregate_views[a]:
             for f in aggregate_views[a][m]:
-                visualize.visualize_census_data(cursor, a, f, m)
+                visualize.visualize_dblp_data(cursor, a, f, m)
 
 finally:
     db_disconnector.teardown_connection(cursor, connection)
