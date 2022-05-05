@@ -18,9 +18,9 @@ def setup_connection(db_name):
     # Create a cursor to perform database operations
     cursor = connection.cursor()
 
-    # Print PostgreSQL details
-    print("PostgreSQL server information")
-    print(connection.get_dsn_parameters(), "\n")
+    # # Print PostgreSQL details
+    # print("PostgreSQL server information")
+    # print(connection.get_dsn_parameters(), "\n")
 
     # Executing a SQL query
     cursor.execute("SELECT version();")

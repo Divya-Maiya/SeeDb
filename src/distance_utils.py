@@ -8,7 +8,7 @@ epsilon = 1e-5
 
 # Given data in the form:
 # attribute_type(Ex: female), f1(m1), f1(m2).., f1(m5), f2(m1),..f2(m5)..,f5(m5), married/unmarried
-def find_distance(data, cols):
+def find_distance(data, cols,measure):
     df = pd.DataFrame(data)
 
     # Separate married/unmarried rows
@@ -27,9 +27,19 @@ def find_distance(data, cols):
         target_df["aggregate"] = married_col.values
 
         reference_df["aggregate"] = unmarried_col.values
-        distance[cols[index]] = kl_divergence(target_df, reference_df)
+        distance[cols[index]] = calculate_distance(measure, target_df, reference_df)
 
     return distance
+
+def calculate_distance(measure, target_df, reference_df):
+    if measure == 'kl_divergence':
+        return kl_divergence(target_df, reference_df)
+    elif measure == 'emd_distance':
+        return emd_distance(target_df, reference_df)
+    elif measure == 'js_divergence_distance':
+        return js_divergence_distance(target_df, reference_df)
+    else:
+        return euclidean_distance(target_df, reference_df)
 
 # Given the result of executing a query on both tables, find the KL divergence
 def kl_divergence(target_rows, reference_rows):
