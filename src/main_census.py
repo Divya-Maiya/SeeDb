@@ -36,7 +36,7 @@ splits = int(config['phased.execution.framework']['splits'])
 
 agg_functions = ["sum", "min", "max", "avg", "count"]
 dim_attr = ["workclass", "education", "occupation", "relationship", "race", "sex", "native_country", "salary"]
-measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week"]
+measure_attr = ["age", "capital_gain", "capital_loss", "hours_per_week"]
 delta = 1e-5
 k = 5
 
