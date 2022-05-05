@@ -18,7 +18,7 @@ All the required libraries are the `requirements.txt` file. To install all the l
 $ pip install -r requirements.txt
 ```
 
-To set the credentials for PostgreSQL, please navigate to `SeeDb/config/seedb_configs.ini` and enter the correct detail for the following:
+To set the credentials for PostgreSQL, please navigate to `SeeDb/config/seedb_configs.ini` and enter the correct details for the following:
 * seedb_user = \<enter postgres username>
 * seedb_password = \<enter postgres password>
 * basepath = /\<path to SeeDb>/SeeDb
