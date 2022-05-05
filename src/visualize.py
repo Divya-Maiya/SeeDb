@@ -62,11 +62,11 @@ def visualize_census_data(cursor, a, f, m):
     plt.show()
 
 
-# Visualize census data
+# Visualize dblp data
 def visualize_dblp_data(cursor, a, f, m):
     print("Visualizing {} v/s {}({})".format(a, f, m))
 
-    # Get married and unmarried
+    # Get target and reference
     cursor.execute(query_generator.get_type0_data(a, f, m))
     ref_views = cursor.fetchall()
 
