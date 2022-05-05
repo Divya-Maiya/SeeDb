@@ -9,6 +9,7 @@ import query_generator
 import distance_utils
 import visualize
 import os
+
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
@@ -38,6 +39,8 @@ dim_attr = ["workclass", "education", "occupation", "relationship", "race", "sex
 measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week"]
 delta = 1e-5
 k = 5
+
+
 def main(measure):
     try:
         cursor, connection = db_connector.setup_connection('seedb_database_census')
@@ -47,9 +50,9 @@ def main(measure):
         aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
         if data_distributor.is_dir_empty("../data/census"):
-            data_distributor.split_data(splits,"adult.data","census",',')
+            data_distributor.split_data(splits, "adult.data", "census", ',')
 
-        data_distributor.generate_split_views(cursor, connection, splits, 'census',',','split_view')
+        data_distributor.generate_split_views(cursor, connection, splits, 'census', ',', 'split_view')
 
         # Phased Execution
         bounds = {}
@@ -102,7 +105,7 @@ def main(measure):
 
                         eps_m = math.sqrt((1 - (current_phase - 1) / splits) * (
                                 2 * math.log(math.log(current_phase)) + math.log(math.pow(math.pi, 2) / (3 * delta)))
-                                        / (2 * current_phase))
+                                          / (2 * current_phase))
 
                         # Get upper and lower bounds
                         lower_bound = dist_views[a][m][f] / current_phase - eps_m
@@ -148,7 +151,6 @@ def main(measure):
         f = open('../data/census/adult.data', 'r')
         cursor.copy_from(f, 'census', sep=',')
         f.close()
-        
 
         # Visualize the top k views left after all phases
         for a in aggregate_views:
@@ -159,8 +161,10 @@ def main(measure):
     finally:
         db_disconnector.teardown_connection(cursor, connection)
 
+
 measure = 'kl_divergence'
-if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance', 'euclidean_distance']:
+if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance',
+                                          'euclidean_distance']:
     measure = sys.argv[1]
 else:
     print("No Distance given or incorrect distance used. Defaulting to KL Divergence")

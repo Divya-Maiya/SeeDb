@@ -8,7 +8,7 @@ epsilon = 1e-5
 
 # Given data in the form:
 # attribute_type(Ex: female), f1(m1), f1(m2).., f1(m5), f2(m1),..f2(m5)..,f5(m5), married/unmarried
-def find_distance(data, cols,measure):
+def find_distance(data, cols, measure):
     df = pd.DataFrame(data)
 
     # Separate married/unmarried rows
@@ -31,6 +31,7 @@ def find_distance(data, cols,measure):
 
     return distance
 
+
 def calculate_distance(measure, target_df, reference_df):
     if measure == 'kl_divergence':
         return kl_divergence(target_df, reference_df)
@@ -40,6 +41,7 @@ def calculate_distance(measure, target_df, reference_df):
         return js_divergence_distance(target_df, reference_df)
     else:
         return euclidean_distance(target_df, reference_df)
+
 
 # Given the result of executing a query on both tables, find the KL divergence
 def kl_divergence(target_rows, reference_rows):
@@ -67,6 +69,7 @@ def kl_divergence(target_rows, reference_rows):
 
     return entropy(target_rows, reference_rows)
 
+
 # Given the result of executing a query on both tables, find the Earth Mover's distance
 def emd_distance(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -93,6 +96,7 @@ def emd_distance(target_rows, reference_rows):
 
     return wasserstein_distance(target_rows, reference_rows)
 
+
 # Given the result of executing a query on both tables, find the JS Divergence distance
 def js_divergence_distance(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -112,7 +116,7 @@ def js_divergence_distance(target_rows, reference_rows):
 
     target_rows = target_rows / (target_sum + epsilon)
     reference_rows = reference_rows / (reference_sum + epsilon)
-    
+
     # Create Averaged list for js divergence
     averaged_rows = (target_rows + reference_rows) / 2
 
@@ -122,6 +126,7 @@ def js_divergence_distance(target_rows, reference_rows):
     averaged_rows[np.where(averaged_rows < epsilon)] = epsilon
 
     return (entropy(target_rows, averaged_rows) + entropy(reference_rows, averaged_rows)) / 2
+
 
 # Given the result of executing a query on both tables, find the euclidean distance divergence
 def euclidean_distance(target_rows, reference_rows):
