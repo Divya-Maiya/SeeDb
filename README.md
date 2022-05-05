@@ -35,7 +35,7 @@ These command line arguments are to take user input for the utility measure that
 Further, any other command line arguments not listed above will default to 'kl_divergence'. Also, when no command line argument is given, 'kl_divergence' will be taken as default.
 
 ### Running the project from the command line
-Please make sure you are insied the `/src` folder:
+Please make sure you are inside the `/src` folder:
 ```commandline
 $ cd src
 ```
