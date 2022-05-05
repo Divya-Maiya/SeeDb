@@ -1,4 +1,4 @@
-# Contributor: Chirag Uday Kamath
+# Contributor: Neha Prakash, Chirag Uday Kamath
 import configparser
 import psycopg2
 

@@ -2,9 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from requests import head
 import query_generator
-import itertools
 import termtables as tt
 
 
@@ -127,57 +125,64 @@ def visualize_dblp_data(cursor, a, f, m):
 
 
 def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, phases):
-    # Usage example:
     # set width of bars
-    barWidth = 0.25
+    bar_width = 0.25
 
-    # set heights of bars
-    bars1 = []
-    bars2 = []
-    bars3 = []
-    bars1.extend(sharing_runtime)
-    bars2.extend(pruning_runtime)
+    # declare all variable
+    sharing_plot = []
+    pruning_plot = []
+    total_time_plot = []
     sharing_total = pruning_total = 0
-    for i in range(len(bars1)):
-        sharing_total += bars1[i]
-        pruning_total += bars2[i]
-    bars1.append(sharing_total)
-    bars2.append(pruning_total)
-    for i in range(len(bars1) - 1):
-        bars3.append(bars1[i] + bars2[i])
-    bars3.extend(total_runtime)
+
+    sharing_plot.extend(sharing_runtime)
+    pruning_plot.extend(pruning_runtime)
+
+    for i in range(len(sharing_plot)):
+        sharing_total += sharing_plot[i]
+        pruning_total += pruning_plot[i]
+
+    sharing_plot.append(sharing_total)
+    pruning_plot.append(pruning_total)
+
+    # Compute total time
+    for i in range(len(sharing_plot) - 1):
+        total_time_plot.append(sharing_plot[i] + pruning_plot[i])
+    total_time_plot.extend(total_runtime)
+
     x_axis = []
     for i in range(1, phases + 1):
         x_axis.append('phase' + str(i))
     x_axis.append('total_time')
 
     row1 = ['Sharing Based']
-    row1.extend(bars1)
+    row1.extend(sharing_plot)
     row2 = ['Pruning Based']
-    row2.extend(bars2)
+    row2.extend(pruning_plot)
     row3 = ['Total Runtime']
-    row3.extend(bars3)
+    row3.extend(total_time_plot)
     header = ['Operations']
     header.extend(x_axis)
+
     latency_table = tt.to_string(
         [row1, row2, row3],
         header=header,
         style=tt.styles.ascii_thin_double,
     )
+
     print('LATENCY TABLE :')
     print(latency_table)
 
-    r1 = np.arange(len(bars1))
-    r2 = [x + barWidth for x in r1]
-    r3 = [x + barWidth for x in r2]
+    r1 = np.arange(len(sharing_plot))
+    r2 = [x + bar_width for x in r1]
+    r3 = [x + bar_width for x in r2]
 
-    plt.bar(r1, bars1, color='r', width=barWidth, edgecolor='white', label='Sharing Based')
-    plt.bar(r2, bars2, color='g', width=barWidth, edgecolor='white', label='Pruning Based')
-    plt.bar(r3, bars3, color='b', width=barWidth, edgecolor='white', label='Total Runtime')
+    plt.bar(r1, sharing_plot, color='r', width=bar_width, edgecolor='white', label='Sharing Based')
+    plt.bar(r2, pruning_plot, color='g', width=bar_width, edgecolor='white', label='Pruning Based')
+    plt.bar(r3, total_time_plot, color='b', width=bar_width, edgecolor='white', label='Total Runtime')
 
     plt.xlabel('group', fontweight='bold')
 
-    plt.xticks([r + barWidth for r in range(len(bars1))], x_axis)
+    plt.xticks([r + bar_width for r in range(len(sharing_plot))], x_axis)
     plt.xlabel("Phase")
     plt.ylabel("Run time")
     plt.legend()

@@ -1,5 +1,5 @@
 # Routine to close DB connection
-# Contributor: Neha Prakash
+# Contributor: Chirag Uday Kamath, Neha Prakash
 def teardown_connection(cursor, connection):
     if connection:
         cursor.close()
