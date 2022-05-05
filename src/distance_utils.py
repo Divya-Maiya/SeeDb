@@ -83,7 +83,7 @@ def emd_distance(target_rows, reference_rows):
 
     return wasserstein_distance(target_rows, reference_rows)
 
-# Given the result of executing a query on both tables, find the Earth Mover's distance
+# Given the result of executing a query on both tables, find the JS Divergence distance
 def js_divergence_distance(target_rows, reference_rows):
     # Pad to make sizes equal
     m = max(len(target_rows), len(reference_rows))
@@ -113,7 +113,7 @@ def js_divergence_distance(target_rows, reference_rows):
 
     return (entropy(target_rows, averaged_rows) + entropy(reference_rows, averaged_rows)) / 2
 
-# Given the result of executing a query on both tables, find the KL divergence
+# Given the result of executing a query on both tables, find the euclidean distance divergence
 def euclidean_distance(target_rows, reference_rows):
     # Pad to make sizes equal
     m = max(len(target_rows), len(reference_rows))
