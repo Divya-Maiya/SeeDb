@@ -177,6 +177,7 @@ def main(measure):
     visualize.visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, splits)
 
 
+
 measure = 'kl_divergence'
 if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance',
                                           'euclidean_distance']:

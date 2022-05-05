@@ -23,6 +23,7 @@ measure_attr = ["pages", "coauthors"]
 delta = 1e-5
 k = 10
 
+
 def main(measure):
     total_runtime = []
     sharing_runtime = []
@@ -36,9 +37,9 @@ def main(measure):
         aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
         if data_distributor.is_dir_empty("../data/dblp"):
-            data_distributor.split_data(splits,"cleaned_final_view.data","dblp",'#')
+            data_distributor.split_data(splits, "cleaned_final_view.data", "dblp", '#')
 
-        data_distributor.generate_split_views(cursor, connection, splits, 'dblp','#','split_view_dblp')
+        data_distributor.generate_split_views(cursor, connection, splits, 'dblp', '#', 'split_view_dblp')
 
         # Phased Execution
         bounds = {}
@@ -94,7 +95,7 @@ def main(measure):
 
                         eps_m = math.sqrt((1 - (current_phase - 1) / splits) * (
                                 2 * math.log(math.log(current_phase)) + math.log(math.pow(math.pi, 2) / (3 * delta)))
-                                        / (2 * current_phase))
+                                          / (2 * current_phase))
 
                         # Get upper and lower bounds
                         lower_bound = dist_views[a][m][f] / current_phase - eps_m
@@ -139,7 +140,7 @@ def main(measure):
         print(aggregate_views)
 
         cursor.execute(open("../db_scripts/create_master_dblp.sql", "r").read())
-        f = open('../data/dblp/cleaned_final_view.data', 'r',encoding='utf-8')
+        f = open('../data/dblp/cleaned_final_view.data', 'r', encoding='utf-8')
         cursor.copy_from(f, 'dblp', sep='#')
         f.close()
 
@@ -155,8 +156,10 @@ def main(measure):
 
     visualize.visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, splits)
 
+
 measure = 'kl_divergence'
-if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance', 'euclidean_distance']:
+if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance',
+                                          'euclidean_distance']:
     measure = sys.argv[1]
 else:
     print("No Distance given or incorrect distance used. Defaulting to KL Divergence")

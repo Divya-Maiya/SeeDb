@@ -5,12 +5,13 @@ import query_generator
 
 
 # Routine to split the data for phased execution
-def split_data(splits,file,dir,sep):
-    all_rows = pd.read_csv("../data/"+dir+"/"+file, sep=sep)
+def split_data(splits, file, dir, sep):
+    all_rows = pd.read_csv("../data/" + dir + "/" + file, sep=sep)
 
     df_split = np.array_split(all_rows, splits)
     for i in range(1, len(df_split) + 1):
-        df_split[i - 1].to_csv("../data/"+dir+"/test_split_{}.csv".format(i), encoding='utf-8', index=False, sep=sep)
+        df_split[i - 1].to_csv("../data/" + dir + "/test_split_{}.csv".format(i), encoding='utf-8', index=False,
+                               sep=sep)
 
 
 def is_dir_empty(path):
@@ -29,7 +30,7 @@ def is_dir_empty(path):
 
 
 # Routine to generate splits
-def generate_split_views(cursor, connection, splits, dir,sep,file):
+def generate_split_views(cursor, connection, splits, dir, sep, file):
     for i in range(1, splits + 1):
         if dir == 'census':
             query = query_generator.get_split_view_query(i)
@@ -37,8 +38,8 @@ def generate_split_views(cursor, connection, splits, dir,sep,file):
             query = query_generator.get_split_view_dblp_query(i)
         cursor.execute(query)
         connection.commit()
-        f = open('../data/{}/test_split_{}.csv'.format(dir, i), 'r',encoding='utf-8')
-        cursor.copy_from(f, file+'{}'.format(i), sep=sep)
+        f = open('../data/{}/test_split_{}.csv'.format(dir, i), 'r', encoding='utf-8')
+        cursor.copy_from(f, file + '{}'.format(i), sep=sep)
         connection.commit()
         f.close()
         # if dir == 'census':
