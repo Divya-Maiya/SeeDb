@@ -49,7 +49,7 @@ To run the project using the DBLP dataset, please refer to the following:
 $ python main_dblp.py 
 ```
 
-The above command will execute the project using DBLP Dataset and KL Divergence as a utility result.
+The above command will execute the project using DBLP Dataset and KL Divergence as a utility distance.
 
 ### Alternative: Using ipynb
 Alternative to running the project on the command line, the ipynb notebook.
