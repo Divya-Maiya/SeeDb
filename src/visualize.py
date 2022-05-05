@@ -1,4 +1,4 @@
-# Contributor: Chirag Uday Kamath
+# Contributor: Chirag Uday Kamath, Neha Prakash
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -6,7 +6,9 @@ import query_generator
 import termtables as tt
 
 
-# Visualize census data
+# Routine to Visualize census data for Census
+# Contributor: Neha Prakash
+
 def visualize_census_data(cursor, a, f, m):
     print("Visualizing {} v/s {}({})".format(a, f, m))
 
@@ -65,7 +67,8 @@ def visualize_census_data(cursor, a, f, m):
     plt.show()
 
 
-# Visualize dblp data
+# Routine to Visualize census data for Dblp
+# Contributor: Neha Prakash
 def visualize_dblp_data(cursor, a, f, m):
     print("Visualizing {} v/s {}({})".format(a, f, m))
 
@@ -123,7 +126,8 @@ def visualize_dblp_data(cursor, a, f, m):
 
     plt.show()
 
-
+# Routine to visualise the latency plots
+# Contributor: Chirag Uday Kamath
 def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, phases):
     # set width of bars
     bar_width = 0.25
