@@ -9,6 +9,9 @@ import query_generator
 import distance_utils
 import visualize
 import os
+import time
+import random
+
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
@@ -35,10 +38,16 @@ splits = int(config['phased.execution.framework']['splits'])
 
 agg_functions = ["sum", "min", "max", "avg", "count"]
 dim_attr = ["workclass", "education", "occupation", "relationship", "race", "sex", "native_country", "salary"]
-measure_attr = ["age", "fnlwgt", "capital_gain", "capital_loss", "hours_per_week"]
+measure_attr = ["age", "capital_gain", "capital_loss", "hours_per_week"]
 delta = 1e-5
 k = 5
+
+
 def main(measure):
+    total_runtime = []
+    sharing_runtime = []
+    pruning_runtime = []
+    total_start = time.time()
     try:
         cursor, connection = db_connector.setup_connection('seedb_database_census')
         queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "Census")
@@ -47,14 +56,14 @@ def main(measure):
         aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
         if data_distributor.is_dir_empty("../data/census"):
-            data_distributor.split_data(splits,"adult.data","census",',')
+            data_distributor.split_data(splits, "adult.data", "census", ',')
 
-        data_distributor.generate_split_views(cursor, connection, splits, 'census',',','split_view')
+        data_distributor.generate_split_views(cursor, connection, splits, 'census', ',', 'split_view')
 
         # Phased Execution
         bounds = {}
         for phase in range(splits):
-
+            sharing_time = time.time()
             current_phase = phase + 1
             dist_views = {}
             for a in aggregate_views:
@@ -92,7 +101,11 @@ def main(measure):
 
                     dist_views[a][m][f] += dist
 
-                # Pruning based optimization
+            sharing_runtime.append(time.time() - sharing_time)
+            pruning_time = time.time()
+
+            # Pruning based optimization
+            for a in aggregate_views:
                 for m in aggregate_views[a]:
                     for f in aggregate_views[a][m]:
                         if phase == 0:
@@ -102,7 +115,7 @@ def main(measure):
 
                         eps_m = math.sqrt((1 - (current_phase - 1) / splits) * (
                                 2 * math.log(math.log(current_phase)) + math.log(math.pow(math.pi, 2) / (3 * delta)))
-                                        / (2 * current_phase))
+                                          / (2 * current_phase))
 
                         # Get upper and lower bounds
                         lower_bound = dist_views[a][m][f] / current_phase - eps_m
@@ -114,6 +127,7 @@ def main(measure):
             sorted_conf_intervals = {k: v for k, v in sorted(bounds.items(), key=lambda item: -1 * item[1][1])}
 
             if len(sorted_conf_intervals) < k:
+                pruning_runtime.append(time.time() - pruning_time)
                 continue
 
             # Find lowest lower bound
@@ -135,12 +149,13 @@ def main(measure):
 
                     if len(aggregate_views[s[0][0]]) == 0:
                         del aggregate_views[s[0][0]]
-
+            
             # Get count of current views in consideration
             count = 0
             for a in aggregate_views:
                 for m in aggregate_views[a]:
                     count += len(aggregate_views[a][m])
+            pruning_runtime.append(time.time() - pruning_time)
 
         print(aggregate_views)
 
@@ -148,19 +163,23 @@ def main(measure):
         f = open('../data/census/adult.data', 'r')
         cursor.copy_from(f, 'census', sep=',')
         f.close()
-        
 
         # Visualize the top k views left after all phases
         for a in aggregate_views:
             for m in aggregate_views[a]:
                 for f in aggregate_views[a][m]:
                     visualize.visualize_census_data(cursor, a, f, m)
-
+    
     finally:
         db_disconnector.teardown_connection(cursor, connection)
+    total_runtime.append(time.time() - total_start)
+
+    visualize.visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, splits)
+
 
 measure = 'kl_divergence'
-if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance', 'euclidean_distance']:
+if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance',
+                                          'euclidean_distance']:
     measure = sys.argv[1]
 else:
     print("No Distance given or incorrect distance used. Defaulting to KL Divergence")

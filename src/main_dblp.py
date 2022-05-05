@@ -8,6 +8,7 @@ import query_utils
 import query_generator
 import distance_utils
 import visualize
+import time
 
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
@@ -23,6 +24,10 @@ delta = 1e-5
 k = 10
 
 def main(measure):
+    total_runtime = []
+    sharing_runtime = []
+    pruning_runtime = []
+    total_start = time.time()
     try:
         cursor, connection = db_connector.setup_connection('seedb_database_dblp')
         queries = query_utils.generate_aggregate_queries(dim_attr, measure_attr, agg_functions, "dblp")
@@ -38,7 +43,7 @@ def main(measure):
         # Phased Execution
         bounds = {}
         for phase in range(splits):
-
+            sharing_time = time.time()
             current_phase = phase + 1
             dist_views = {}
             for a in aggregate_views:
@@ -75,8 +80,11 @@ def main(measure):
                         dist_views[a][m][f] = 0
 
                     dist_views[a][m][f] += dist
+            sharing_runtime.append(time.time() - sharing_time)
+            pruning_time = time.time()
 
-                # Pruning based optimization
+            # Pruning based optimization
+            for a in aggregate_views:
                 for m in aggregate_views[a]:
                     for f in aggregate_views[a][m]:
                         if phase == 0:
@@ -98,6 +106,7 @@ def main(measure):
             sorted_conf_intervals = {k: v for k, v in sorted(bounds.items(), key=lambda item: -1 * item[1][1])}
 
             if len(sorted_conf_intervals) < k:
+                pruning_runtime.append(time.time() - pruning_time)
                 continue
 
             # Find lowest lower bound
@@ -125,6 +134,7 @@ def main(measure):
             for a in aggregate_views:
                 for m in aggregate_views[a]:
                     count += len(aggregate_views[a][m])
+            pruning_runtime.append(time.time() - pruning_time)
 
         print(aggregate_views)
 
@@ -141,6 +151,9 @@ def main(measure):
 
     finally:
         db_disconnector.teardown_connection(cursor, connection)
+    total_runtime.append(time.time() - total_start)
+
+    visualize.visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, splits)
 
 measure = 'kl_divergence'
 if len(sys.argv) == 2 and sys.argv[1] in ['kl_divergence', 'emd_distance', 'js_divergence_distance', 'euclidean_distance']:
