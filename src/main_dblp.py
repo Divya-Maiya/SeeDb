@@ -1,4 +1,4 @@
-# Contributors: Neha Prakash, Chirag Uday Kamath
+# Contributors: Neha Prakash, Chirag Uday Kamath, Divya Maiya
 
 import configparser
 import sys
