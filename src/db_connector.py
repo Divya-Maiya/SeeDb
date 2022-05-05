@@ -8,7 +8,6 @@ config.sections()
 
 # Routine to connect to the Db
 def setup_connection(db_name):
-
     # Connect to an existing database
     connection = psycopg2.connect(user=config['seedb.postgresql']['seedb_user'],
                                   password=config['seedb.postgresql']['seedb_password'],

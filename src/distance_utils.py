@@ -31,6 +31,7 @@ def find_distance(data, cols):
 
     return distance
 
+
 # Given the result of executing a query on both tables, find the KL divergence
 def kl_divergence(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -56,6 +57,7 @@ def kl_divergence(target_rows, reference_rows):
     reference_rows[np.where(reference_rows < epsilon)] = epsilon
 
     return entropy(target_rows, reference_rows)
+
 
 # Given the result of executing a query on both tables, find the Earth Mover's distance
 def emd_distance(target_rows, reference_rows):
@@ -83,6 +85,7 @@ def emd_distance(target_rows, reference_rows):
 
     return wasserstein_distance(target_rows, reference_rows)
 
+
 # Given the result of executing a query on both tables, find the Earth Mover's distance
 def js_divergence_distance(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -102,7 +105,7 @@ def js_divergence_distance(target_rows, reference_rows):
 
     target_rows = target_rows / (target_sum + epsilon)
     reference_rows = reference_rows / (reference_sum + epsilon)
-    
+
     # Create Averaged list for js divergence
     averaged_rows = (target_rows + reference_rows) / 2
 
@@ -112,6 +115,7 @@ def js_divergence_distance(target_rows, reference_rows):
     averaged_rows[np.where(averaged_rows < epsilon)] = epsilon
 
     return (entropy(target_rows, averaged_rows) + entropy(reference_rows, averaged_rows)) / 2
+
 
 # Given the result of executing a query on both tables, find the KL divergence
 def euclidean_distance(target_rows, reference_rows):

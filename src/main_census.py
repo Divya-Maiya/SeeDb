@@ -8,7 +8,7 @@ import query_utils
 import query_generator
 import distance_utils
 import visualize
-import os
+
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
@@ -47,9 +47,9 @@ try:
     aggregate_views = query_utils.generate_aggregate_views(dim_attr, measure_attr, agg_functions)
 
     if data_distributor.is_dir_empty("../data/census"):
-        data_distributor.split_data(splits,"adult.data","census",',')
+        data_distributor.split_data(splits, "adult.data", "census", ',')
 
-    data_distributor.generate_split_views(cursor, connection, splits, 'census',',','split_view')
+    data_distributor.generate_split_views(cursor, connection, splits, 'census', ',', 'split_view')
 
     # Phased Execution
     bounds = {}
@@ -148,7 +148,6 @@ try:
     f = open('../data/census/adult.data', 'r')
     cursor.copy_from(f, 'census', sep=',')
     f.close()
-    
 
     # Visualize the top k views left after all phases
     for a in aggregate_views:
