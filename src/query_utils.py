@@ -1,6 +1,9 @@
+# Contributors: Neha Prakash, Divya Maiya
+
 import pandas as pd
 
 
+# Contributor: Divya Maiya
 # Routine to generate all aggregate queries
 def generate_aggregate_queries(A, M, F, table):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
@@ -15,6 +18,7 @@ def generate_aggregate_queries(A, M, F, table):
     return queries
 
 
+# Contributor: Divya Maiya
 # Routine to generate data structure to store all aggregate views
 def generate_aggregate_views(A, M, F):
     # A - Dimension attributes (group by), M - Measure attribute (aggregate), F - Aggregate functions
@@ -32,6 +36,7 @@ def generate_aggregate_views(A, M, F):
     return views
 
 
+# Contributor: Neha Prakash
 # Routine to execute sql queries
 def execute_queries(cursor, queries):
     data = []
@@ -43,6 +48,7 @@ def execute_queries(cursor, queries):
     return data, columns
 
 
+# Contributor: Neha Prakash
 # Routine to convert sql rows to dataframe
 def convert_rows_to_df(data_rows, cols):
     df = []

@@ -1,3 +1,4 @@
+-- Contributor: Neha Prakash
 drop table if exists dblp;
 
 create table dblp(

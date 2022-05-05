@@ -1,3 +1,5 @@
+# Contributors: Divya Maiya, Neha Prakash
+
 import pandas as pd
 import os
 import numpy as np
@@ -5,6 +7,7 @@ import query_generator
 
 
 # Routine to split the data for phased execution
+# Contributor: Neha Prakash
 def split_data(splits, file, dir, sep):
     all_rows = pd.read_csv("../data/" + dir + "/" + file, sep=sep)
 
@@ -13,7 +16,7 @@ def split_data(splits, file, dir, sep):
         df_split[i - 1].to_csv("../data/" + dir + "/test_split_{}.csv".format(i), encoding='utf-8', index=False,
                                sep=sep)
 
-
+# Contributor: Neha Prakash
 def is_dir_empty(path):
     initial_count = 0
     if os.path.exists(path) and not os.path.isfile(path):
@@ -30,6 +33,7 @@ def is_dir_empty(path):
 
 
 # Routine to generate splits
+# Contributor: Divya Maiya
 def generate_split_views(cursor, connection, splits, dir, sep, file):
     for i in range(1, splits + 1):
         if dir == 'census':
@@ -52,6 +56,7 @@ def generate_split_views(cursor, connection, splits, dir, sep, file):
 
 # Routine to split data by marital status - reference and target
 # Currently unused since we implement query rewriting
+# Contributor: Divya Maiya
 def split_data_by_marital_status(cursor, connection):
     cursor.execute(open("../db_scripts/create_main_views_census.sql", "r").read())
     connection.commit()

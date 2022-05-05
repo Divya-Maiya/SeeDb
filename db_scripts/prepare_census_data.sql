@@ -1,3 +1,5 @@
+-- Contributor: Divya Maiya
+
 drop table IF EXISTS census;
 
 create table census(

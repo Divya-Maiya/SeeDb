@@ -1,3 +1,4 @@
+# Contributor: Chirag Uday Kamath
 import configparser
 import psycopg2
 

@@ -1,3 +1,5 @@
+-- Contributor: Divya Maiya
+
 DROP VIEW IF EXISTS Married;
 DROP VIEW IF EXISTS Unmarried;
 

@@ -1,3 +1,4 @@
+# Contributor: Divya Maiya, Neha Prakash
 # Test routine to cleanup files
 c = 0
 with open("../data/adult.test") as f:

@@ -1,3 +1,5 @@
+-- Contributor: Neha Prakash
+
 DROP TABLE IF EXISTS paperauths cascade;
 DROP TABLE IF EXISTS papers cascade;
 DROP TABLE IF EXISTS venue cascade;

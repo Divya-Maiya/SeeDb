@@ -1,9 +1,12 @@
+# Contributor: Chirag Uday Kamath
+
 import numpy as np
 import matplotlib.pyplot as plt
 from requests import head
 import query_generator
 import itertools
 import termtables as tt
+
 
 # Visualize census data
 def visualize_census_data(cursor, a, f, m):
@@ -122,11 +125,12 @@ def visualize_dblp_data(cursor, a, f, m):
 
     plt.show()
 
+
 def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, phases):
     # Usage example:
     # set width of bars
     barWidth = 0.25
-    
+
     # set heights of bars
     bars1 = []
     bars2 = []
@@ -139,12 +143,12 @@ def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, pha
         pruning_total += bars2[i]
     bars1.append(sharing_total)
     bars2.append(pruning_total)
-    for i in range(len(bars1)-1):
-        bars3.append(bars1[i]+bars2[i])
+    for i in range(len(bars1) - 1):
+        bars3.append(bars1[i] + bars2[i])
     bars3.extend(total_runtime)
     x_axis = []
-    for i in range(1, phases+1):
-        x_axis.append('phase'+str(i))
+    for i in range(1, phases + 1):
+        x_axis.append('phase' + str(i))
     x_axis.append('total_time')
 
     row1 = ['Sharing Based']
@@ -153,12 +157,12 @@ def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, pha
     row2.extend(bars2)
     row3 = ['Total Runtime']
     row3.extend(bars3)
-    header=['Operations']
+    header = ['Operations']
     header.extend(x_axis)
     latency_table = tt.to_string(
-    [row1,row2,row3],
-    header=header,
-    style=tt.styles.ascii_thin_double,
+        [row1, row2, row3],
+        header=header,
+        style=tt.styles.ascii_thin_double,
     )
     print('LATENCY TABLE :')
     print(latency_table)
@@ -166,17 +170,16 @@ def visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, pha
     r1 = np.arange(len(bars1))
     r2 = [x + barWidth for x in r1]
     r3 = [x + barWidth for x in r2]
-    
 
     plt.bar(r1, bars1, color='r', width=barWidth, edgecolor='white', label='Sharing Based')
     plt.bar(r2, bars2, color='g', width=barWidth, edgecolor='white', label='Pruning Based')
     plt.bar(r3, bars3, color='b', width=barWidth, edgecolor='white', label='Total Runtime')
-    
+
     plt.xlabel('group', fontweight='bold')
-    
+
     plt.xticks([r + barWidth for r in range(len(bars1))], x_axis)
     plt.xlabel("Phase")
     plt.ylabel("Run time")
     plt.legend()
-    
+
     plt.show()

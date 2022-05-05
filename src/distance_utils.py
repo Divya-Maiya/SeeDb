@@ -1,3 +1,4 @@
+# Contributors: Chirag Uday Kamath, Divya Maiya, Neha Prakash
 import pandas as pd
 import numpy as np
 from scipy.stats import entropy, wasserstein_distance
@@ -8,6 +9,7 @@ epsilon = 1e-5
 
 # Given data in the form:
 # attribute_type(Ex: female), f1(m1), f1(m2).., f1(m5), f2(m1),..f2(m5)..,f5(m5), married/unmarried
+# Contributor: Chirag Uday Kamath
 def find_distance(data, cols, measure):
     df = pd.DataFrame(data)
 
@@ -32,6 +34,7 @@ def find_distance(data, cols, measure):
     return distance
 
 
+# Contributor: Chirag Uday Kamath
 def calculate_distance(measure, target_df, reference_df):
     if measure == 'kl_divergence':
         return kl_divergence(target_df, reference_df)
@@ -43,6 +46,7 @@ def calculate_distance(measure, target_df, reference_df):
         return euclidean_distance(target_df, reference_df)
 
 
+# Contributor: Neha Prakash
 # Given the result of executing a query on both tables, find the KL divergence
 def kl_divergence(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -70,6 +74,7 @@ def kl_divergence(target_rows, reference_rows):
     return entropy(target_rows, reference_rows)
 
 
+# Contributor: Neha Prakash
 # Given the result of executing a query on both tables, find the Earth Mover's distance
 def emd_distance(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -97,6 +102,7 @@ def emd_distance(target_rows, reference_rows):
     return wasserstein_distance(target_rows, reference_rows)
 
 
+# Contributor: Divya Maiya
 # Given the result of executing a query on both tables, find the JS Divergence distance
 def js_divergence_distance(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -128,6 +134,7 @@ def js_divergence_distance(target_rows, reference_rows):
     return (entropy(target_rows, averaged_rows) + entropy(reference_rows, averaged_rows)) / 2
 
 
+# Contributor: Divya Maiya
 # Given the result of executing a query on both tables, find the euclidean distance divergence
 def euclidean_distance(target_rows, reference_rows):
     # Pad to make sizes equal

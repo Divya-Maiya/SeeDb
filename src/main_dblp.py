@@ -1,3 +1,5 @@
+# Contributors: Neha Prakash, Chirag Uday Kamath
+
 import configparser
 import sys
 import math

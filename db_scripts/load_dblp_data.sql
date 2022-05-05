@@ -1,3 +1,5 @@
+-- Contributor: Neha Prakash
+
 SET client_encoding TO 'UTF8';
 
 \COPY authors (id, name) FROM 'authors.csv' WITH (FORMAT CSV, HEADER true);

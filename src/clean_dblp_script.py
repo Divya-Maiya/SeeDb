@@ -1,3 +1,5 @@
+# Contributor: Chirag Uday Kamath
+
 import csv
 import re
 import itertools

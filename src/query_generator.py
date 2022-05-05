@@ -1,4 +1,7 @@
+# Contributors: Divya Maiya, Neha Prakash
+
 def get_split_view_query(i):
+    # Contributor: Divya Maiya
     return """
            drop table if exists split_view{};
            create table split_view{} (age real, workclass text, fnlwgt real, education text, education_num real, marital_status text, occupation text, relationship text, race text, sex text, capital_gain real, capital_loss real, hours_per_week real, native_country text, salary text);
@@ -6,6 +9,7 @@ def get_split_view_query(i):
 
 
 def get_split_view_dblp_query(i):
+    # Contributor: Neha Prakash
     return """
            drop table if exists split_view_dblp{};
            create table split_view_dblp{} (year text, school text, venue text, author text, pages real, title text, coauthors real, venue_type real);
@@ -13,6 +17,7 @@ def get_split_view_dblp_query(i):
 
 
 def get_married_umarried_view_generator_query(i):
+    # Contributor: Divya Maiya
     return """
            drop table if exists split_married_{};
            drop table if exists split_unmarried_{};
@@ -22,6 +27,7 @@ def get_married_umarried_view_generator_query(i):
 
 
 def get_type0_type13_query(i):
+    # Contributor: Neha Prakash
     return """
            drop table if exists split_type0_{};
            drop table if exists split_type13_{};
@@ -32,6 +38,7 @@ def get_type0_type13_query(i):
 
 # Extension - Query Rewriting to use a single query for target and reference dataset
 def get_target_reference_merged_query_census(a, query_params, phase):
+    # Contributor: Divya Maiya
     return """
            select {}, {},
            case marital_status
@@ -49,6 +56,7 @@ def get_target_reference_merged_query_census(a, query_params, phase):
 
 
 def get_target_reference_merged_query_dblp(a, query_params, phase):
+    # Contributor: Neha Prakash
     return """
                select {}, {},
                case venue_type
@@ -63,6 +71,7 @@ def get_target_reference_merged_query_dblp(a, query_params, phase):
 
 
 def get_married_data(a, f, m):
+    # Contributor: Divya Maiya
     return """
            select {}, {}({})
            from census c
@@ -72,6 +81,7 @@ def get_married_data(a, f, m):
 
 
 def get_unmarried_data(a, f, m):
+    # Contributor: Divya Maiya
     return """
            select {}, {}({})
            from census c
@@ -81,6 +91,7 @@ def get_unmarried_data(a, f, m):
 
 
 def get_type0_data(a, f, m):
+    # Contributor: Neha Prakash
     return """
            select {}, {}({})
            from dblp d
@@ -90,6 +101,7 @@ def get_type0_data(a, f, m):
 
 
 def get_type13_data(a, f, m):
+    # Contributor: Neha Prakash
     return """
            select {}, {}({})
            from dblp d
