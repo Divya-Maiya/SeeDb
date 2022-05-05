@@ -8,7 +8,7 @@ import query_utils
 import query_generator
 import distance_utils
 import visualize
-
+import os
 config = configparser.ConfigParser()
 config.read('../config/seedb_configs.ini')
 path = config['local.paths']['basepath']
@@ -143,6 +143,12 @@ try:
                 count += len(aggregate_views[a][m])
 
     print(aggregate_views)
+
+    cursor.execute(open("../db_scripts/prepare_census_data.sql", "r").read())
+    f = open('../data/census/adult.data', 'r')
+    cursor.copy_from(f, 'census', sep=',')
+    f.close()
+    
 
     # Visualize the top k views left after all phases
     for a in aggregate_views:

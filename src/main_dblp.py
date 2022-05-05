@@ -17,10 +17,10 @@ sys.path.insert(1, path + '/src')
 splits = int(config['phased.execution.framework']['splits'])
 
 agg_functions = ["sum", "min", "max", "avg", "count"]
-dim_attr = ["year", "school", "venue", "author"]
+dim_attr = ["year", "school", "venue"]
 measure_attr = ["pages", "coauthors"]
 delta = 1e-5
-k = 5
+k = 10
 
 try:
     cursor, connection = db_connector.setup_connection('seedb_database_dblp')
@@ -126,6 +126,11 @@ try:
                 count += len(aggregate_views[a][m])
 
     print(aggregate_views)
+
+    cursor.execute(open("../db_scripts/create_master_dblp.sql", "r").read())
+    f = open('../data/dblp/cleaned_final_view.data', 'r',encoding='utf-8')
+    cursor.copy_from(f, 'dblp', sep='#')
+    f.close()
 
     # Visualize the top k views left after all phases
     for a in aggregate_views:

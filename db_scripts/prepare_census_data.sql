@@ -1,6 +1,6 @@
-drop table IF EXISTS Census;
+drop table IF EXISTS census;
 
-create table Census(
+create table census(
 	age INTEGER,
 	workclass CHAR(50),
 	fnlwgt INTEGER,
@@ -18,4 +18,4 @@ create table Census(
 	salary CHAR(50)
 );
 
-\copy Census FROM adult.data with (DELIMITER(','));
+-- COPY Census FROM '../data/census/adult.data' with (DELIMITER(','));

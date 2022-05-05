@@ -39,7 +39,7 @@ for row in data:
         r=int(random.randint(0, 10))
         # print(r)
     p=[]
-    p.append(r-l+1)
+    p.append(abs(r-l+1))
     # page_count = r-l
     q=[]
     school = row[1]

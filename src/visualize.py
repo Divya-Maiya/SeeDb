@@ -80,7 +80,7 @@ def visualize_dblp_data(cursor, a, f, m):
     for pair in target_views:
         order_keys.add(pair[0].strip())
 
-    # Get vals for married and unmarried
+    # Get vals for type 0 and type 1/3
     ref_dict = {}
     target_dict = {}
 
@@ -108,8 +108,8 @@ def visualize_dblp_data(cursor, a, f, m):
     # Plot the data
     x_axis = np.arange(len(list(order_keys)))
 
-    plt.bar(x_axis - 0.2, ref_vals, 0.4, label='Married')
-    plt.bar(x_axis + 0.2, target_vals, 0.4, label='Unmarried')
+    plt.bar(x_axis - 0.2, ref_vals, 0.4, label='Type 1,3')
+    plt.bar(x_axis + 0.2, target_vals, 0.4, label='Type 0')
 
     plt.xticks(x_axis, order_keys, rotation='vertical')
     plt.xlabel(a)
