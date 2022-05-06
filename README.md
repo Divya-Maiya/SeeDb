@@ -28,6 +28,8 @@ To set the credentials for PostgreSQL, please navigate to `SeeDb/config/seedb_co
 * seedb_password = \<enter postgres password>
 * basepath = /\<path to SeeDb>/SeeDb
 
+**Note:** Please ensure that the values you provide for seedb_database_census and seedb_database_dblp are names of actual databases that exist in your local postgres instance. (Both of these values could point to the same database on your machine)
+
 ### Using command line arguments
 The following list explains the acceptable command line arguments: 
 1. kl_divergence (Kullback-Leibler divergence)
