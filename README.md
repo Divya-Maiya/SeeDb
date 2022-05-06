@@ -45,14 +45,25 @@ Please make sure you are inside the `/src` folder:
 ```commandline
 $ cd src
 ```
-To run the project using the Census dataset and EMD distance, please refer to the following: 
+To run the project using the Census dataset and KL Divergence, please refer to the following: 
 ```commandline
-$ python main_census.py emd_distance
+$ python main_census.py kl_divergence
 ```
 
 To run the project using the DBLP dataset, please refer to the following: 
 ```commandline
-$ python main_dblp.py 
+$ python main_dblp.py kl_divergence
+```
+
+To run the project using different distances for dblp and census datasets, please refer to the following: 
+```commandline
+$ python main_census.py emd_distance
+$ python main_dblp.py emd_distance
+$ python main_census.py js_divergence_distance
+$ python main_dblp.py js_divergence_distance
+$ python main_census.py euclidean_distance
+$ python main_dblp.py euclidean_distance
+
 ```
 
 The above command will execute the project using DBLP Dataset and KL Divergence as a utility distance.
