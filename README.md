@@ -13,7 +13,7 @@ Unzip the project folder by right clicking on the zipped folder and selecting ex
 
 ### Assumptions made
 * We are assuming that PostgreSQL is preinstalled and the login crentials are known. 
-* We also assume that `python` and `pip` are preinstalled. If not, please install python and follow the instructions here to install pip: https://pip.pypa.io/en/stable/installation/
+* We also assume that `python` version `3.7.1` (or above) and `pip` are preinstalled. If not, please install python and follow the instructions here to install pip: https://pip.pypa.io/en/stable/installation/
 
 ### Downloading the required libraries/packages
 All the required libraries are the `requirements.txt` file. To install all the libraries to run the project, run the following command. 
