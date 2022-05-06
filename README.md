@@ -8,6 +8,9 @@ $ git clone https://github.com/Divya-Maiya/SeeDb.git
 $ cd SeeDb
 ```
 
+### Installing from Zip folder
+Unzip the project folder by right clicking on the zipped folder and selecting extract all
+
 ### Assumptions made
 * We are assuming that PostgreSQL is preinstalled and the login crentials are known. 
 * We also assume that `python` and `pip` are preinstalled. If not, please install python and follow the instructions here to install pip: https://pip.pypa.io/en/stable/installation/
@@ -19,6 +22,8 @@ $ pip install -r requirements.txt
 ```
 
 To set the credentials for PostgreSQL, please navigate to `SeeDb/config/seedb_configs.ini` and enter the correct details for the following:
+* seedb_database_census = \<enter postgres db to connect to for setting up the census tables>
+* seedb_database_dblp = \<enter postgres db to connect to for setting up the dblp tables>
 * seedb_user = \<enter postgres username>
 * seedb_password = \<enter postgres password>
 * basepath = /\<path to SeeDb>/SeeDb
@@ -29,6 +34,7 @@ The following list explains the acceptable command line arguments:
 2. emd_distance (Earth Mover's Distance)
 3. js_divergence_distance (Jensen-Shannon divergence)
 4. euclidean_distance
+5. no argument defaults to kl_divergence
 
 These command line arguments are to take user input for the utility measure that needs to be used. Please refer the section below to see an example on how to use the above.
 
