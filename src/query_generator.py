@@ -1,4 +1,4 @@
-# Contributors: Divya Maiya, Neha Prakash
+# Contributors: Divya Maiya (dmaiya@umass.edu), Neha Prakash (nehaprakash@umass.edu)
 
 def get_split_view_query(i):
     # Contributor: Divya Maiya

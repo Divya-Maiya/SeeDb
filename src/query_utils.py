@@ -1,4 +1,4 @@
-# Contributors: Neha Prakash, Divya Maiya
+# Contributors: Neha Prakash(nehaprakash@umass.edu), Divya Maiya (dmaiya@umass.edu)
 
 import pandas as pd
 

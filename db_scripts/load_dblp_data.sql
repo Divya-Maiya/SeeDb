@@ -1,4 +1,4 @@
--- Contributor: Neha Prakash
+-- Contributor: Neha Prakash (nehaprakash@umass.edu)
 
 SET client_encoding TO 'UTF8';
 

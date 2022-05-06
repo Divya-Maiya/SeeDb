@@ -1,4 +1,4 @@
-# Contributor: Divya Maiya, Neha Prakash
+# Contributor: Divya Maiya (dmaiya@umass.edu), Neha Prakash (nehaprakash@umass.edu)
 # Test routine to cleanup files
 c = 0
 with open("../data/adult.test") as f:

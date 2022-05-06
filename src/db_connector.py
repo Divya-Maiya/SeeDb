@@ -1,4 +1,4 @@
-# Contributor: Neha Prakash, Chirag Uday Kamath
+# Contributor: Neha Prakash (nehaprakash@umass.edu), Chirag Uday Kamath (cukamath@umass.edu)
 import configparser
 import psycopg2
 

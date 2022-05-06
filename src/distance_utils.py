@@ -1,4 +1,4 @@
-# Contributors: Chirag Uday Kamath, Divya Maiya, Neha Prakash
+# Contributors: Chirag Uday Kamath (cukamath@umass.edu), Divya Maiya (dmaiya@umass.edu)
 import pandas as pd
 import numpy as np
 from scipy.stats import entropy, wasserstein_distance
@@ -13,7 +13,7 @@ epsilon = 1e-5
 def find_distance(data, cols, measure):
     df = pd.DataFrame(data)
 
-    # Separate married/unmarried rows
+    # Separate target and reference
     df_target = df[df.iloc[:, -2] == 1]
     df_reference = df[df.iloc[:, -2] == 0]
 
@@ -46,7 +46,7 @@ def calculate_distance(measure, target_df, reference_df):
         return euclidean_distance(target_df, reference_df)
 
 
-# Contributor: Neha Prakash
+# Contributor: Divya Maiya
 # Given the result of executing a query on both tables, find the KL divergence
 def kl_divergence(target_rows, reference_rows):
     # Pad to make sizes equal
@@ -74,7 +74,7 @@ def kl_divergence(target_rows, reference_rows):
     return entropy(target_rows, reference_rows)
 
 
-# Contributor: Neha Prakash
+# Contributor: Divya Maiya
 # Given the result of executing a query on both tables, find the Earth Mover's distance
 def emd_distance(target_rows, reference_rows):
     # Pad to make sizes equal

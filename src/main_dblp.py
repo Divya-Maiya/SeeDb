@@ -1,4 +1,5 @@
-# Contributors: Neha Prakash, Chirag Uday Kamath, Divya Maiya
+# Contributors: Neha Prakash (nehaprakash@umass.edu), Chirag Uday Kamath (cukamath@umass.edu),
+# Divya Maiya (dmaiya@umass.edu)
 
 import configparser
 import sys

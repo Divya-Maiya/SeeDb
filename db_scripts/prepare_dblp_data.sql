@@ -1,4 +1,4 @@
--- Contributor: Neha Prakash
+-- Contributor: Neha Prakash (nehaprakash@umass.edu)
 
 DROP TABLE IF EXISTS paperauths cascade;
 DROP TABLE IF EXISTS papers cascade;

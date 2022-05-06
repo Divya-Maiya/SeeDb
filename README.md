@@ -52,7 +52,6 @@ $ python main_dblp.py
 The above command will execute the project using DBLP Dataset and KL Divergence as a utility distance.
 
 ### Alternative: Using ipynb
-Alternative to running the project on the command line, the ipynb notebook.
+An alternative to running the project on the command line is the ipynb notebook.
 * For the Census Dataset: This is present in `SeeDb/src/Results_Census.ipynb`
 * For the DBLP Dataset: This is present in `SeeDb/src/Results_Dblp.ipynb`
-## Folder Structure

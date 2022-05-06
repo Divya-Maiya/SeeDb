@@ -1,4 +1,4 @@
-# Contributors: Divya Maiya, Neha Prakash
+# Contributors: Chirag Uday Kamath (cukamath@umass.edu), Neha Prakash (nehaprakash@umass.edu)
 
 import pandas as pd
 import os
@@ -15,6 +15,7 @@ def split_data(splits, file, dir, sep):
     for i in range(1, len(df_split) + 1):
         df_split[i - 1].to_csv("../data/" + dir + "/test_split_{}.csv".format(i), encoding='utf-8', index=False,
                                sep=sep)
+
 
 # Contributor: Neha Prakash
 def is_dir_empty(path):
@@ -33,7 +34,7 @@ def is_dir_empty(path):
 
 
 # Routine to generate splits
-# Contributor: Divya Maiya
+# Contributor: Chirag Uday Kamath
 def generate_split_views(cursor, connection, splits, dir, sep, file):
     for i in range(1, splits + 1):
         if dir == 'census':
@@ -56,7 +57,7 @@ def generate_split_views(cursor, connection, splits, dir, sep, file):
 
 # Routine to split data by marital status - reference and target
 # Currently unused since we implement query rewriting
-# Contributor: Divya Maiya
+# Contributor: Chirag Uday Kamath
 def split_data_by_marital_status(cursor, connection):
     cursor.execute(open("../db_scripts/create_main_views_census.sql", "r").read())
     connection.commit()

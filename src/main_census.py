@@ -1,4 +1,5 @@
-# Contributors: Chirag Uday Kamath, Divya Maiya, Neha Prakash
+# Contributors: Chirag Uday Kamath (cukamath@umass.edu), Divya Maiya (dmaiya@umass.edu),
+# Neha Prakash (nehaprakash@umass.edu)
 
 import configparser
 import sys
@@ -151,7 +152,7 @@ def main(measure):
 
                     if len(aggregate_views[s[0][0]]) == 0:
                         del aggregate_views[s[0][0]]
-            
+
             # Get count of current views in consideration
             count = 0
             for a in aggregate_views:
@@ -171,13 +172,12 @@ def main(measure):
             for m in aggregate_views[a]:
                 for f in aggregate_views[a][m]:
                     visualize.visualize_census_data(cursor, a, f, m)
-    
+
     finally:
         db_disconnector.teardown_connection(cursor, connection)
     total_runtime.append(time.time() - total_start)
 
     visualize.visualise_latency_plots(total_runtime, sharing_runtime, pruning_runtime, splits)
-
 
 
 measure = 'kl_divergence'
