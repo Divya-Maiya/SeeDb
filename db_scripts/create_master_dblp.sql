@@ -1,4 +1,4 @@
--- Contributor: Neha Prakash
+-- Contributor: Neha Prakash (nehaprakash@umass.edu)
 drop table if exists dblp;
 
 create table dblp(

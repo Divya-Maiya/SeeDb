@@ -1,4 +1,4 @@
--- Contributor: Divya Maiya
+-- Contributor: Divya Maiya (dmaiya@umass.edu)
 
 DROP VIEW IF EXISTS Married;
 DROP VIEW IF EXISTS Unmarried;

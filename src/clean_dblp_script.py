@@ -1,4 +1,4 @@
-# Contributor: Chirag Uday Kamath
+# Contributor: Chirag Uday Kamath (cukamath@umass.edu)
 
 import csv
 import re

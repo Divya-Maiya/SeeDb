@@ -1,4 +1,4 @@
-# Contributors: Chirag Uday Kamath, Divya Maiya, Neha Prakash
+# Contributors: Chirag Uday Kamath (cukamath@umass.edu), Neha Prakash (nehaprakash@umass.edu)
 
 import pandas as pd
 import os
@@ -7,7 +7,7 @@ import query_generator
 
 
 # Routine to split the data for phased execution
-# Contributor: Divya Maiya
+# Contributor: Neha Prakash
 def split_data(splits, file, dir, sep):
     all_rows = pd.read_csv("../data/" + dir + "/" + file, sep=sep)
 
@@ -15,6 +15,7 @@ def split_data(splits, file, dir, sep):
     for i in range(1, len(df_split) + 1):
         df_split[i - 1].to_csv("../data/" + dir + "/test_split_{}.csv".format(i), encoding='utf-8', index=False,
                                sep=sep)
+
 
 # Contributor: Neha Prakash
 def is_dir_empty(path):

@@ -1,4 +1,4 @@
-# Contributor: Chirag Uday Kamath, Neha Prakash
+# Contributor: Chirag Uday Kamath (cukamath@umass.edu), Neha Prakash (nehaprakash@umass.edu)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -125,6 +125,7 @@ def visualize_dblp_data(cursor, a, f, m):
     plt.legend()
 
     plt.show()
+
 
 # Routine to visualise the latency plots
 # Contributor: Chirag Uday Kamath

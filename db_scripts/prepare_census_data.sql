@@ -1,4 +1,4 @@
--- Contributor: Divya Maiya
+-- Contributor: Divya Maiya (dmaiya@umass.edu)
 
 drop table IF EXISTS census;
 
